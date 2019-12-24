@@ -1,0 +1,13 @@
+package io.andersori.led.api;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LedApiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(LedApiApplication.class, args);
+	}
+
+}
