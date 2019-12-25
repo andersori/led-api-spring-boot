@@ -6,6 +6,18 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     
-    <include file="db/changelog/changes/changelog-001.xml"/>
+    <!-- <changeSet id="changelog-001" author="andersori">
+    	<createTable tableName="users">
+    		<column name="user_id" type="long" autoIncrement="true">
+    			<constraints primaryKey="true" nullable="false"/>
+    		</column>
+    		<column name="username" type="varchar(50)">
+    			<constraints nullable="false"/>
+    		</column>
+    		<column name="password" type="varchar(120)">
+    			<constraints nullable="false"/>
+    		</column>
+    	</createTable>
+    </changeSet> -->
     
 </databaseChangeLog>
