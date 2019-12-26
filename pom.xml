@@ -61,6 +61,16 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<excludes>
+					<exclude>application-test.properties</exclude>
+					<exclude>application-dev.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -85,6 +95,10 @@
 		</profile>
 		<profile>
 			<id>dev</id>
+			<properties>
+				<spring-boot.run.profiles>dev</spring-boot.run.profiles>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>com.h2database</groupId>
@@ -96,9 +110,35 @@
 					<artifactId>liquibase-core</artifactId>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.coderplus.maven.plugins</groupId>
+						<artifactId>copy-rename-maven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<id>rename-file</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<sourceFile>${basedir}/src/main/resources/application-dev.properties</sourceFile>
+									<destinationFile>target/classes/application.properties</destinationFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>prod</id>
+			<properties>
+				<spring-boot.run.profiles>prod</spring-boot.run.profiles>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>org.postgresql</groupId>

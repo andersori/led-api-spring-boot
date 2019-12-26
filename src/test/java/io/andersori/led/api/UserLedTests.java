@@ -18,7 +18,7 @@ class UserLedTests {
 	private UserLedService userService;
 
 	@Test
-	void contextLoads() {
+	void registerrecord() {
 		UserLed user = new UserLed();
 		user.setUsername("test");
 		user.setPassword("1234");
