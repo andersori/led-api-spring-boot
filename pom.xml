@@ -66,7 +66,6 @@
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
 				<excludes>
-					<exclude>application-test.properties</exclude>
 					<exclude>application-dev.properties</exclude>
 				</excludes>
 			</resource>
@@ -89,7 +88,7 @@
 				<dependency>
 					<groupId>com.h2database</groupId>
 					<artifactId>h2</artifactId>
-					<scope>runtime</scope>
+					<scope>test</scope>
 				</dependency>
 			</dependencies>
 		</profile>
