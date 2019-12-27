@@ -4,12 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "user_led")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,10 +22,10 @@ public class UserLed {
 	@Column(name = "user_id")
 	private Long id;
 
-	@Column(name = "username")
+	@Column(name = "username", length = 400)
 	private String username;
 
-	@Column(name = "password")
+	@Column(name = "password", length = 120)
 	private String password;
 
 }

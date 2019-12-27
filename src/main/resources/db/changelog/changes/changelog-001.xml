@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     
-    <changeSet id="changelog-001" author="andersori">
+    <!--<changeSet id="changelog-001" author="andersori">
     	<createTable tableName="users">
     		<column name="user_id" type="long" autoIncrement="true">
     			<constraints primaryKey="true" nullable="false"/>
@@ -18,6 +18,6 @@
     			<constraints nullable="false"/>
     		</column>
     	</createTable>
-    </changeSet>
+    </changeSet>-->
     
 </databaseChangeLog>
