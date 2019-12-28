@@ -33,11 +33,14 @@ public class Event {
 	@JoinColumn(name = "owner_account_id")
 	private Account owner;
 	
-	@Column(name = "name")
+	@Column(name = "name", length = 100)
 	private String name;
 	
 	@Column(name = "date")
 	private LocalDate date;
+	
+	@Column(name = "description", length = 300)
+	private String description;
 	
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "event_id")

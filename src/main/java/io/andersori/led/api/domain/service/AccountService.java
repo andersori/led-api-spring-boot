@@ -15,7 +15,7 @@ public interface AccountService {
 
 	public List<Account> get(int pageNumber, int pageSize);
 
-	public List<Account> get(String name, int pageNumber, int pageSize);
+	public List<Account> get(String firstName, int pageNumber, int pageSize);
 
 	public List<Account> getAll();
 	

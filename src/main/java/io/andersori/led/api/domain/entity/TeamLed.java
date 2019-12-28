@@ -25,20 +25,23 @@ public class TeamLed {
 	@Column(name = "team_led_id")
 	private Long id;
 	
-	@Column(name = "name")
+	@Column(name = "name", length = 200)
 	private String name;
 	
-	@Column(name = "participants")
+	@Column(name = "participants", length = 400)
 	private String participants;
 	
 	@Column(name = "score")
 	private Integer score;
 	
-	@Column(name = "secret")
+	@Column(name = "secret", length = 5)
 	private String secret;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "group_led_id")
+	@JoinColumn(name = "group_led_id", nullable = true)
 	private GroupLed group;
 	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "event_id", nullable = false)
+	private Event event;
 }

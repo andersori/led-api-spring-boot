@@ -32,7 +32,7 @@ public class GroupLed {
 	@JoinColumn(name = "event_id")
 	private Event event;
 
-	@Column(name = "name")
+	@Column(name = "name", length = 100)
 	private String name;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

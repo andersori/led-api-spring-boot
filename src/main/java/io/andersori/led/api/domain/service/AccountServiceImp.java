@@ -54,9 +54,9 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public List<Account> get(String name, int pageNumber, int pageSize) {
+	public List<Account> get(String firstName, int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("user_id"));
-		return this.accountRepository.findByNameContaining(name, page).getContent();
+		return this.accountRepository.findByFirstNameContaining(firstName, page).getContent();
 	}
 
 	@Override

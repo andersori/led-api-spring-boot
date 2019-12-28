@@ -10,5 +10,5 @@ import io.andersori.led.api.domain.entity.Account;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-	Page<Account> findByNameContaining(String name, Pageable pageable);
+	Page<Account> findByFirstNameContaining(String name, Pageable pageable);
 }
