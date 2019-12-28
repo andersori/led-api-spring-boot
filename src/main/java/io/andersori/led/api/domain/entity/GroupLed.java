@@ -29,10 +29,10 @@ public class GroupLed {
 	private Long id;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "event_id")
+	@JoinColumn(name = "event_id", nullable = false)
 	private Event event;
 
-	@Column(name = "name", length = 100)
+	@Column(name = "name", length = 100, nullable = false)
 	private String name;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -33,13 +33,8 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public Optional<Account> delete(Account account) {
-		try{
-			this.accountRepository.delete(account);
-			return Optional.of(account);
-		} catch (Exception e) {
-			return Optional.empty();
-		}
+	public void delete(Long id) {
+		this.accountRepository.deleteById(id);
 	}
 
 	@Override
@@ -62,6 +57,11 @@ public class AccountServiceImp implements AccountService {
 	@Override
 	public List<Account> getAll() {
 		return this.accountRepository.findAll();
+	}
+
+	@Override
+	public Optional<Account> get(String username) {
+		return this.accountRepository.findByUsername(username);
 	}
 
 }

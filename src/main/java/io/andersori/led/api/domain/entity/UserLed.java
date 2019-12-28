@@ -22,7 +22,7 @@ public class UserLed {
 	@Column(name = "user_id")
 	private Long id;
 
-	@Column(name = "username", length = 400)
+	@Column(name = "username", length = 400, nullable = false, unique = true)
 	private String username;
 
 	@Column(name = "password", length = 120)

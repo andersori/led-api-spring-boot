@@ -32,13 +32,8 @@ public class UserLedServiceImp implements UserLedService {
 	}
 
 	@Override
-	public Optional<UserLed> delete(UserLed user) {
-		try {
-			this.userRepository.delete(user);
-			return Optional.of(user);
-		} catch(Exception e) {
-			return Optional.empty();
-		}
+	public void delete(Long id) {
+		this.userRepository.deleteById(id);
 	}
 
 	@Override

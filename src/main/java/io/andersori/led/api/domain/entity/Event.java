@@ -23,27 +23,27 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Event {
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "event_id")
 	private Long id;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "owner_account_id")
+	@JoinColumn(name = "owner_account_id", nullable = false)
 	private Account owner;
-	
-	@Column(name = "name", length = 100)
+
+	@Column(name = "name", length = 100, nullable = false)
 	private String name;
-	
+
 	@Column(name = "date")
 	private LocalDate date;
-	
+
 	@Column(name = "description", length = 300)
 	private String description;
-	
+
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "event_id")
 	private List<GroupLed> groups;
-	
+
 }

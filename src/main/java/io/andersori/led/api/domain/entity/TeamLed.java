@@ -19,29 +19,30 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class TeamLed {
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "team_led_id")
 	private Long id;
-	
-	@Column(name = "name", length = 200)
+
+	@Column(name = "name", length = 200, nullable = false)
 	private String name;
-	
+
 	@Column(name = "participants", length = 400)
 	private String participants;
-	
+
 	@Column(name = "score")
 	private Integer score;
-	
-	@Column(name = "secret", length = 5)
+
+	@Column(name = "secret", length = 5, nullable = false)
 	private String secret;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "group_led_id", nullable = true)
+	@JoinColumn(name = "group_led_id")
 	private GroupLed group;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "event_id", nullable = false)
 	private Event event;
+	
 }

@@ -5,18 +5,10 @@ import java.util.Optional;
 
 import io.andersori.led.api.domain.entity.Account;
 
-public interface AccountService {
+public interface AccountService extends Service<Account> {
 	
-	public Optional<Account> save(Account account);
-
-	public Optional<Account> delete(Account account);
-
-	public Optional<Account> get(Long id);
-
-	public List<Account> get(int pageNumber, int pageSize);
+	public Optional<Account> get(String username);
 
 	public List<Account> get(String firstName, int pageNumber, int pageSize);
-
-	public List<Account> getAll();
 	
 }
