@@ -23,9 +23,9 @@ public class AccountServiceImp implements AccountService {
 	}
 	
 	@Override
-	public Optional<Account> save(Account account) {
+	public Optional<Account> save(Account entity) {
 		try{
-			return Optional.of(this.accountRepository.save(account));
+			return Optional.of(this.accountRepository.save(entity));
 		} catch (Exception e) {
 			return Optional.empty();
 		}
@@ -61,7 +61,7 @@ public class AccountServiceImp implements AccountService {
 
 	@Override
 	public Optional<Account> get(String username) {
-		return this.accountRepository.findByUsername(username);
+		return this.accountRepository.findByUserUsername(username);
 	}
 
 }

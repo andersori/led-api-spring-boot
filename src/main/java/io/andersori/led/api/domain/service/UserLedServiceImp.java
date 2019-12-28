@@ -23,9 +23,9 @@ public class UserLedServiceImp implements UserLedService {
 	}
 
 	@Override
-	public Optional<UserLed> save(UserLed user) {
+	public Optional<UserLed> save(UserLed entity) {
 		try {
-			return Optional.of(this.userRepository.save(user));
+			return Optional.of(userRepository.save(entity));
 		} catch(Exception e) {
 			return Optional.empty();
 		}
@@ -33,33 +33,33 @@ public class UserLedServiceImp implements UserLedService {
 
 	@Override
 	public void delete(Long id) {
-		this.userRepository.deleteById(id);
+		userRepository.deleteById(id);
 	}
 
 	@Override
 	public Optional<UserLed> get(Long id) {
-		return this.userRepository.findById(id);
+		return userRepository.findById(id);
 	}
 
 	@Override
 	public Optional<UserLed> get(String username) {
-		return this.userRepository.findByUsername(username);
+		return userRepository.findByUsername(username);
 	}
 
 	@Override
 	public Optional<UserLed> get(String username, String password) {
-		return this.userRepository.findByUsernameAndPassword(username, password);
+		return userRepository.findByUsernameAndPassword(username, password);
 	}
 
 	@Override
 	public List<UserLed> get(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("user_id"));
-		return this.userRepository.findAll(page).getContent();
+		return userRepository.findAll(page).getContent();
 	}
 
 	@Override
 	public List<UserLed> getAll() {
-		return this.userRepository.findAll();
+		return userRepository.findAll();
 	}
 	
 }

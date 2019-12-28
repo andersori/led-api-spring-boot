@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface Service<T> {
 	
-	public Optional<T> save(T data);
+	public Optional<T> save(T entity);
 
 	public void delete(Long id);
 
