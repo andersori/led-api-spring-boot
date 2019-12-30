@@ -15,4 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	Page<Account> findByFirstNameContaining(String name, Pageable pageable);
 	
 	Optional<Account> findByUserUsername(String username);
+	
+	Optional<Account> findByEmail(String email);
 }

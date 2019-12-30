@@ -38,28 +38,28 @@ public class GroupLedServiceImp implements GroupLedService {
 	}
 
 	@Override
-	public Optional<GroupLed> get(Long id) {
+	public Optional<GroupLed> find(Long id) {
 		return groupLedRepository.findByEventId(id);
 	}
 
 	@Override
-	public List<GroupLed> get(int pageNumber, int pageSize) {
+	public List<GroupLed> find(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("group_led_id"));
 		return groupLedRepository.findAll(page).getContent();
 	}
 
 	@Override
-	public List<GroupLed> getAll() {
+	public List<GroupLed> findAll() {
 		return groupLedRepository.findAll();
 	}
 
 	@Override
-	public Optional<GroupLed> get(String name) {
+	public Optional<GroupLed> find(String name) {
 		return groupLedRepository.findByName(name);
 	}
 
 	@Override
-	public Optional<GroupLed> get(Event event) {
+	public Optional<GroupLed> find(Event event) {
 		return groupLedRepository.findByEventId(event.getId());
 	}
 

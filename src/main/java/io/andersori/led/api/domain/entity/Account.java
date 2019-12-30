@@ -47,10 +47,10 @@ public class Account {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(name = "email")
+	@Column(name = "email", unique = true)
 	private String email;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "event_id")
 	private List<Event> events;
 

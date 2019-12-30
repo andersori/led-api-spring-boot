@@ -37,23 +37,23 @@ public class EventServiceImp implements EventService {
 	}
 
 	@Override
-	public Optional<Event> get(Long id) {
+	public Optional<Event> find(Long id) {
 		return eventRepository.findById(id);
 	}
 
 	@Override
-	public List<Event> get(int pageNumber, int pageSize) {
+	public List<Event> find(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("event_id"));
 		return eventRepository.findAll(page).getContent();
 	}
 
 	@Override
-	public List<Event> getAll() {
+	public List<Event> findAll() {
 		return eventRepository.findAll();
 	}
 
 	@Override
-	public Optional<Event> get(String name) {
+	public Optional<Event> find(String name) {
 		return eventRepository.findByName(name);
 	}
 

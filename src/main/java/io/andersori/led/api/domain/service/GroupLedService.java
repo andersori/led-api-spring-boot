@@ -7,7 +7,7 @@ import io.andersori.led.api.domain.entity.GroupLed;
 
 public interface GroupLedService extends Service<GroupLed> {
 	
-	Optional<GroupLed> get(String name);
+	Optional<GroupLed> find(String name);
 	
-	Optional<GroupLed> get(Event event);
+	Optional<GroupLed> find(Event event);
 }

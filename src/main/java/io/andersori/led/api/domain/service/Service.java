@@ -5,14 +5,14 @@ import java.util.Optional;
 
 public interface Service<T> {
 	
-	public Optional<T> save(T entity);
+	public Optional<T> save(T data);
 
 	public void delete(Long id);
 
-	public Optional<T> get(Long id);
+	public Optional<T> find(Long id);
 
-	public List<T> get(int pageNumber, int pageSize);
+	public List<T> find(int pageNumber, int pageSize);
 	
-	public List<T> getAll();
+	public List<T> findAll();
 
 }

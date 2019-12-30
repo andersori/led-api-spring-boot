@@ -39,28 +39,28 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	public Optional<TeamLed> get(Long id) {
+	public Optional<TeamLed> find(Long id) {
 		return teamLedRepository.findById(id);
 	}
 
 	@Override
-	public List<TeamLed> get(int pageNumber, int pageSize) {
+	public List<TeamLed> find(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("team_led_id"));
 		return teamLedRepository.findAll(page).getContent();
 	}
 
 	@Override
-	public List<TeamLed> getAll() {
+	public List<TeamLed> findAll() {
 		return teamLedRepository.findAll();
 	}
 
 	@Override
-	public Optional<TeamLed> get(GroupLed group) {
+	public Optional<TeamLed> find(GroupLed group) {
 		return teamLedRepository.findByGroupId(group.getId());
 	}
 
 	@Override
-	public Optional<TeamLed> get(Event event) {
+	public Optional<TeamLed> find(Event event) {
 		return teamLedRepository.findByEventId(event.getId());
 	}
 

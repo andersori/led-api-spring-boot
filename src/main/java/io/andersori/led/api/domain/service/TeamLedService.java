@@ -8,8 +8,8 @@ import io.andersori.led.api.domain.entity.TeamLed;
 
 public interface TeamLedService extends Service<TeamLed> {
 	
-	Optional<TeamLed> get(GroupLed group);
+	Optional<TeamLed> find(GroupLed group);
 	
-	Optional<TeamLed> get(Event event);
+	Optional<TeamLed> find(Event event);
 	
 }
