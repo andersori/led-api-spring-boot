@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
+import io.andersori.led.api.domain.exception.DomainException;
+import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.GroupLedRepository;
 
 @Service
@@ -24,11 +26,11 @@ public class GroupLedServiceImp implements GroupLedService {
 	}
 
 	@Override
-	public Optional<GroupLed> save(GroupLed entity) {
+	public GroupLed save(GroupLed entity) throws DomainException {
 		try {
-			return Optional.of(groupLedRepository.save(entity));
+			return groupLedRepository.save(entity);
 		} catch (Exception e) {
-			return Optional.empty();
+			throw new DomainException(GroupLedService.class, e.getMessage(), e.getCause());
 		}
 	}
 
@@ -38,8 +40,12 @@ public class GroupLedServiceImp implements GroupLedService {
 	}
 
 	@Override
-	public Optional<GroupLed> find(Long id) {
-		return groupLedRepository.findByEventId(id);
+	public GroupLed find(Long id) throws NotFoundException {
+		Optional<GroupLed> group = groupLedRepository.findByEventId(id);
+		if (group.isPresent()) {
+			return group.get();
+		}
+		throw new NotFoundException(GroupLedService.class, "Group with id " + id + " not found.");
 	}
 
 	@Override

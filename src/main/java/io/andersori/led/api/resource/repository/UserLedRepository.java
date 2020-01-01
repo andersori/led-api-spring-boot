@@ -21,5 +21,7 @@ public interface UserLedRepository extends JpaRepository<UserLed, Long> {
 	@Transactional
 	@Query("UPDATE UserLed u SET u.password = :password WHERE u.username = :username")
 	Integer changePassword(String username, String password);
-
+	
+	@Query("SELECT u.password FROM UserLed AS u WHERE c.username = :username")
+	String getPassword(String username);
 }

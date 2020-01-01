@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import io.andersori.led.api.domain.entity.Event;
+import io.andersori.led.api.domain.exception.DomainException;
+import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.EventRepository;
 
 @Service
@@ -23,11 +25,11 @@ public class EventServiceImp implements EventService {
 	}
 
 	@Override
-	public Optional<Event> save(Event entity) {
+	public Event save(Event entity) throws DomainException {
 		try {
-			return Optional.of(eventRepository.save(entity));
+			return eventRepository.save(entity);
 		} catch (Exception e) {
-			return Optional.empty();
+			throw new DomainException(EventService.class, e.getMessage(), e.getCause());
 		}
 	}
 
@@ -37,8 +39,12 @@ public class EventServiceImp implements EventService {
 	}
 
 	@Override
-	public Optional<Event> find(Long id) {
-		return eventRepository.findById(id);
+	public Event find(Long id) throws DomainException {
+		Optional<Event> event = eventRepository.findById(id);
+		if (event.isPresent()) {
+			return event.get();
+		}
+		throw new NotFoundException(EventService.class, "Event with id " + id + " not found.");
 	}
 
 	@Override

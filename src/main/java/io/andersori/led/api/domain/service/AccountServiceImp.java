@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import io.andersori.led.api.app.web.dto.AccountDto;
 import io.andersori.led.api.domain.entity.Account;
 import io.andersori.led.api.domain.entity.UserLed;
+import io.andersori.led.api.domain.exception.ConflictException;
+import io.andersori.led.api.domain.exception.DomainException;
+import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.AccountRepository;
 import io.andersori.led.api.resource.repository.UserLedRepository;
 
@@ -34,15 +37,29 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public Optional<AccountDto> save(AccountDto data) {
-		Optional<Account> accountSaved = accountRepository.findByUserUsername(data.getUsername());
-		if(accountSaved.isPresent()) {
-			Account acEntity = data.toEntity();
-			acEntity.getUser().setPassword(accountSaved.get().getUser().getPassword());
-			
-			return Optional.of(new AccountDto().toDto(accountRepository.save(acEntity)));
+	public AccountDto save(AccountDto data) throws DomainException {
+		try {
+			Optional<Account> accountSaved = accountRepository.findById(data.getId());
+			if (accountSaved.isPresent()) {
+				if (!data.getUsername().equals(accountSaved.get().getUser().getUsername())) {
+					if (accountRepository.findByUserUsername(data.getUsername()).isPresent()) {
+						throw new ConflictException(AccountService.class, "This username is in use.");
+					}
+				}
+
+				Account acEntity = data.toEntity();
+				acEntity.getUser().setPassword(accountSaved.get().getUser().getPassword());
+
+				return new AccountDto().toDto(accountRepository.save(acEntity));
+			} else {
+				throw new NotFoundException(AccountService.class,
+						"Account with username " + data.getUsername() + " not found.");
+			}
+		} catch (NotFoundException | ConflictException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DomainException(AccountService.class, e.getCause().getMessage(), e.getCause());
 		}
-		return Optional.empty();
 	}
 
 	@Override
@@ -51,9 +68,12 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public Optional<AccountDto> find(Long id) {
+	public AccountDto find(Long id) throws DomainException {
 		Optional<Account> account = accountRepository.findById(id);
-		return account.isPresent() ? Optional.of(new AccountDto().toDto(account.get())) : Optional.empty();
+		if (account.isPresent()) {
+			return new AccountDto().toDto(account.get());
+		}
+		throw new NotFoundException(AccountService.class, "Account with id " + id + " not found.");
 	}
 
 	@Override
@@ -80,9 +100,12 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public Optional<AccountDto> find(String username) {
+	public AccountDto find(String username) throws DomainException {
 		Optional<Account> account = accountRepository.findByUserUsername(username);
-		return account.isPresent() ? Optional.of(new AccountDto().toDto(account.get())) : Optional.empty();
+		if (account.isPresent()) {
+			return new AccountDto().toDto(account.get());
+		}
+		throw new NotFoundException(AccountService.class, "Account with username " + username + " not found.");
 	}
 
 	@Override
@@ -129,6 +152,15 @@ public class AccountServiceImp implements AccountService {
 			return Optional.empty();
 		}
 		return Optional.of(account);
+	}
+
+	@Override
+	public String getPassword(String username) throws DomainException {
+		try {
+			return userLedRepository.getPassword(username);
+		} catch(Exception e) {
+			throw new DomainException(AccountService.class, e.getCause().getMessage(), e.getCause());
+		}
 	}
 
 }

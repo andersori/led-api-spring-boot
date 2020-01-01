@@ -12,24 +12,26 @@ import org.springframework.stereotype.Service;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
 import io.andersori.led.api.domain.entity.TeamLed;
+import io.andersori.led.api.domain.exception.DomainException;
+import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.TeamLedRepository;
 
 @Service
 public class TeamLedServiceImp implements TeamLedService {
 
 	private TeamLedRepository teamLedRepository;
-	
+
 	@Autowired
 	public TeamLedServiceImp(TeamLedRepository teamLedRepository) {
 		this.teamLedRepository = teamLedRepository;
 	}
-	
+
 	@Override
-	public Optional<TeamLed> save(TeamLed entity) {
+	public TeamLed save(TeamLed entity) throws DomainException {
 		try {
-			return Optional.of(teamLedRepository.save(entity));
-		} catch(Exception e) {
-			return Optional.empty();
+			return teamLedRepository.save(entity);
+		} catch (Exception e) {
+			throw new DomainException(TeamLedService.class, e.getMessage(), e.getCause());
 		}
 	}
 
@@ -39,8 +41,12 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	public Optional<TeamLed> find(Long id) {
-		return teamLedRepository.findById(id);
+	public TeamLed find(Long id) throws DomainException {
+		Optional<TeamLed> team = teamLedRepository.findById(id);
+		if (team.isPresent()) {
+			return team.get();
+		}
+		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
 	}
 
 	@Override

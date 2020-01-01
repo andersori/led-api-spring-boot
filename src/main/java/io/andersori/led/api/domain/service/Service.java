@@ -1,18 +1,19 @@
 package io.andersori.led.api.domain.service;
 
 import java.util.List;
-import java.util.Optional;
+
+import io.andersori.led.api.domain.exception.DomainException;
 
 public interface Service<T> {
-	
-	public Optional<T> save(T data);
 
-	public void delete(Long id);
+	T save(T data) throws DomainException;
 
-	public Optional<T> find(Long id);
+	void delete(Long id);
 
-	public List<T> find(int pageNumber, int pageSize);
-	
-	public List<T> findAll();
+	T find(Long id) throws DomainException;
+
+	List<T> find(int pageNumber, int pageSize);
+
+	List<T> findAll();
 
 }
