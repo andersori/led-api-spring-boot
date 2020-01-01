@@ -12,12 +12,12 @@ import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.AccountService;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImp implements UserDetailsService {
 	
 	private AccountService accountService;
 	
 	@Autowired
-	public UserDetailsServiceImpl(AccountService accountService) {
+	public UserDetailsServiceImp(AccountService accountService) {
 		this.accountService = accountService;
 	}
 

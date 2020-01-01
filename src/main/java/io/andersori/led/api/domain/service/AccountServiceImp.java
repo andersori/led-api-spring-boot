@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.andersori.led.api.app.web.dto.AccountDto;
@@ -27,13 +28,15 @@ public class AccountServiceImp implements AccountService {
 	private Logger logger = LoggerFactory.getLogger(AccountServiceImp.class);
 
 	private AccountRepository accountRepository;
-
 	private UserLedRepository userLedRepository;
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public AccountServiceImp(AccountRepository accountRepository, UserLedRepository userLedRepository) {
+	public AccountServiceImp(AccountRepository accountRepository, UserLedRepository userLedRepository,
+			PasswordEncoder passwordEncoder) {
 		this.accountRepository = accountRepository;
 		this.userLedRepository = userLedRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
@@ -144,7 +147,7 @@ public class AccountServiceImp implements AccountService {
 	public Optional<AccountDto> register(AccountDto account, String password) {
 		try {
 			Account acEntity = account.toEntity();
-			acEntity.getUser().setPassword(password);
+			acEntity.getUser().setPassword(passwordEncoder.encode(password));
 
 			accountRepository.save(acEntity);
 		} catch (Exception e) {
@@ -158,7 +161,7 @@ public class AccountServiceImp implements AccountService {
 	public String getPassword(String username) throws DomainException {
 		try {
 			return userLedRepository.getPassword(username);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new DomainException(AccountService.class, e.getCause().getMessage(), e.getCause());
 		}
 	}
