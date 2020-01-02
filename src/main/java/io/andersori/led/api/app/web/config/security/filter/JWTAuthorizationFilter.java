@@ -10,20 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import io.andersori.led.api.app.web.config.security.jwt.JwtToken;
+import io.andersori.led.api.app.web.config.security.jwt.JWTToken;
 import io.andersori.led.api.app.web.config.security.jwt.SecurityConstants;
 import io.andersori.led.api.domain.BeanUtil;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-	private JwtToken jwtToken;
+	private JWTToken jwtToken;
 	
 	public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
 		super(authenticationManager);
-		jwtToken = BeanUtil.getBean(JwtToken.class);
+		jwtToken = BeanUtil.getBean(JWTToken.class);
 	}
 	
 	@Override
@@ -54,4 +55,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		return null;
 	}
 
+	@Override
+	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException {
+		System.out.println("falta fazer alguma coisa");
+	}
 }

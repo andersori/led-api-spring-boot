@@ -28,7 +28,7 @@ import io.andersori.led.api.domain.service.AccountService;
 @TestMethodOrder(OrderAnnotation.class)
 class AccountDtoTest {
 
-	private Logger logger = LoggerFactory.getLogger(AccountDtoTest.class);
+	private final Logger logger = LoggerFactory.getLogger(AccountDtoTest.class);
 
 	@Autowired
 	private AccountService accountService;

@@ -28,7 +28,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 			String password = accountService.getPassword(username);
 			return new User(account.getUsername(), password, account.getRoles());
 		} catch(DomainException e) {
-			throw new UsernameNotFoundException(username);
+			throw new UsernameNotFoundException(username, e);
 		}
 	}
 

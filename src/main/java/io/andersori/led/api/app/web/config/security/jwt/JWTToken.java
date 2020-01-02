@@ -11,7 +11,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 @Service
-public class JwtToken {
+public class JWTToken {
 
 	private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 	
