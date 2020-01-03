@@ -17,12 +17,12 @@ import lombok.Setter;
 @Setter
 public class ApiErrorResponse {
 
-	@JsonProperty("time_stamp")
+	@JsonProperty("timestamp")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@Setter(AccessLevel.PRIVATE)
-	private LocalDateTime timeStamp;
+	private LocalDateTime timestamp;
 	
 	private String message;
 	
@@ -30,7 +30,7 @@ public class ApiErrorResponse {
 	private String classType;
 
 	public ApiErrorResponse() {
-		timeStamp = LocalDateTime.now();
+		timestamp = LocalDateTime.now();
 	}
 
 }

@@ -14,6 +14,7 @@ import io.andersori.led.api.app.web.config.security.exception.CustomAccessDenied
 import io.andersori.led.api.app.web.config.security.exception.CustomAuthenticationEntryPoint;
 import io.andersori.led.api.app.web.config.security.filter.JWTAuthenticationFilter;
 import io.andersori.led.api.app.web.config.security.filter.JWTAuthorizationFilter;
+import io.andersori.led.api.app.web.controller.util.PathConfig;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomAccessDenied accessHandler;
 
-	@SuppressWarnings("unused")
 	@Autowired
 	private CustomAuthenticationEntryPoint entryHandle;
 
@@ -39,35 +39,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		/*http.cors()
-
-				.and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, "/sign-up").permitAll()
-
-				.anyRequest().authenticated()
-
-				.and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
-				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
-
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-				.and()
-				.httpBasic()
-				.authenticationEntryPoint(entryHandle)
-				
-				.and()
-				.exceptionHandling().accessDeniedHandler(accessHandler);
-		*/
 		http
+		.csrf().disable()
         .authorizeRequests()
+        	.antMatchers(PathConfig.VERSION + PathConfig.PROTECTED_PATH + "/**").hasRole("DEFAULT")
+        	.antMatchers(PathConfig.VERSION + PathConfig.ADMIN_PATH + "/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         .and()
         	.addFilter(new JWTAuthenticationFilter(authenticationManager()))
 			.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-			.exceptionHandling().accessDeniedHandler(accessHandler)
-        .and()
-            .csrf().disable();
+		.and()
+			.exceptionHandling().accessDeniedHandler(accessHandler).authenticationEntryPoint(entryHandle);
+			
 	}
 
 }

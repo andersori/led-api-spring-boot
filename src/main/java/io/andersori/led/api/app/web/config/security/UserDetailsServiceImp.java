@@ -7,15 +7,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import io.andersori.led.api.app.web.config.security.util.SecurityUtil;
 import io.andersori.led.api.app.web.dto.AccountDto;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.AccountService;
 
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
-	
+
 	private AccountService accountService;
-	
+
 	@Autowired
 	public UserDetailsServiceImp(AccountService accountService) {
 		this.accountService = accountService;
@@ -26,8 +27,8 @@ public class UserDetailsServiceImp implements UserDetailsService {
 		try {
 			AccountDto account = accountService.find(username);
 			String password = accountService.getPassword(username);
-			return new User(account.getUsername(), password, account.getRoles());
-		} catch(DomainException e) {
+			return new User(account.getUsername(), password, SecurityUtil.getAuthorities(account.getRoles()));
+		} catch (DomainException e) {
 			throw new UsernameNotFoundException(username, e);
 		}
 	}

@@ -13,12 +13,13 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.andersori.led.api.app.web.config.security.jwt.JWTToken;
-import io.andersori.led.api.app.web.config.security.jwt.SecurityConstants;
+import io.andersori.led.api.app.web.config.security.util.SecurityUtil;
 import io.andersori.led.api.app.web.config.security.util.UserRequest;
 import io.andersori.led.api.app.web.response.ApiErrorResponse;
 import io.andersori.led.api.domain.BeanUtil;
@@ -52,12 +53,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 		String token = jwtToken.generateToken(authResult);
-		response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+		response.addHeader(SecurityUtil.HEADER_STRING, SecurityUtil.TOKEN_PREFIX + token);
 	}
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException failed) throws IOException, ServletException {
+		
+		SecurityContextHolder.clearContext();
 		
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType("application/json");

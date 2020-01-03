@@ -31,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
 		ApiErrorResponse error = new ApiErrorResponse();
 		error.setClassType(authException.getClass().getCanonicalName());
-		error.setMessage("Please check following attributes: 'username', 'password'.");
+		error.setMessage(authException.getMessage());
 
 		mapper.writeValue(response.getWriter(), error);
 	}

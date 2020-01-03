@@ -14,17 +14,26 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.andersori.led.api.app.web.response.ApiErrorResponse;
+
 @Component
 public class CustomAccessDenied implements AccessDeniedHandler {
-	
+
 	@Autowired
-	private ObjectMapper objectMapper;
+	private ObjectMapper mapper;
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
+
 		response.setStatus(HttpStatus.FORBIDDEN.value());
-		objectMapper.writeValue(response.getWriter(), "Nopity nop!");
+		response.setContentType("application/json");
+
+		ApiErrorResponse error = new ApiErrorResponse();
+		error.setClassType(accessDeniedException.getClass().getCanonicalName());
+		error.setMessage(accessDeniedException.getMessage());
+
+		mapper.writeValue(response.getWriter(), error);
 	}
 
 }

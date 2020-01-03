@@ -10,14 +10,16 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
+import io.andersori.led.api.app.web.config.security.util.SecurityUtil;
+
 @Service
 public class JWTToken {
 
-	private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-	
+	private static final long JWT_TOKEN_VALIDITY = 864_000_000; // 10days
+
 	@Value("jwt.secret")
 	private String secret;
-	
+
 	public String generateToken(Authentication authResult) {
 		return JWT.create().withSubject(((User) authResult.getPrincipal()).getUsername())
 				.withExpiresAt(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
@@ -26,7 +28,7 @@ public class JWTToken {
 
 	public String validateToken(String token) {
 		return JWT.require(Algorithm.HMAC512(secret.getBytes())).build()
-				.verify(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getSubject();
+				.verify(token.replace(SecurityUtil.TOKEN_PREFIX, "")).getSubject();
 	}
 
 }
