@@ -8,7 +8,7 @@ public interface Service<T> {
 
 	T save(T data) throws DomainException;
 
-	void delete(Long id);
+	void delete(Long id) throws DomainException;
 
 	T find(Long id) throws DomainException;
 

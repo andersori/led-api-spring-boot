@@ -2,6 +2,7 @@ package io.andersori.led.api.domain.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import io.andersori.led.api.app.web.dto.TeamDTO;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
 import io.andersori.led.api.domain.entity.TeamLed;
@@ -27,47 +29,59 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	public TeamLed save(TeamLed entity) throws DomainException {
+	public TeamDTO save(TeamDTO data) throws DomainException {
 		try {
-			return teamLedRepository.save(entity);
+			return new TeamDTO().toDTO(teamLedRepository.save(data.toEntity()));
 		} catch (Exception e) {
-			throw new DomainException(TeamLedService.class, e.getMessage(), e.getCause());
+			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
 		}
 	}
 
 	@Override
-	public void delete(Long id) {
-		teamLedRepository.deleteById(id);
-	}
-
-	@Override
-	public TeamLed find(Long id) throws DomainException {
+	public void delete(Long id) throws DomainException {
 		Optional<TeamLed> team = teamLedRepository.findById(id);
 		if (team.isPresent()) {
-			return team.get();
+			teamLedRepository.deleteById(id);
 		}
 		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
 	}
 
 	@Override
-	public List<TeamLed> find(int pageNumber, int pageSize) {
+	public TeamDTO find(Long id) throws DomainException {
+		Optional<TeamLed> team = teamLedRepository.findById(id);
+		if (team.isPresent()) {
+			return new TeamDTO().toDTO(team.get());
+		}
+		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
+	}
+
+	@Override
+	public List<TeamDTO> find(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("team_led_id"));
-		return teamLedRepository.findAll(page).getContent();
+		return teamLedRepository.findAll(page).getContent().stream().map(t -> {
+			return new TeamDTO().toDTO(t);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<TeamLed> findAll() {
-		return teamLedRepository.findAll();
+	public List<TeamDTO> findAll() {
+		return teamLedRepository.findAll().stream().map(t -> {
+			return new TeamDTO().toDTO(t);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<TeamLed> find(GroupLed group) {
-		return teamLedRepository.findByGroupId(group.getId());
+	public List<TeamDTO> find(GroupLed group) {
+		return teamLedRepository.findByGroupId(group.getId()).stream().map(t -> {
+			return new TeamDTO().toDTO(t);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<TeamLed> find(Event event) {
-		return teamLedRepository.findByEventId(event.getId());
+	public List<TeamDTO> find(Event event) {
+		return teamLedRepository.findByEventId(event.getId()).stream().map(t -> {
+			return new TeamDTO().toDTO(t);
+		}).collect(Collectors.toList());
 	}
 
 }

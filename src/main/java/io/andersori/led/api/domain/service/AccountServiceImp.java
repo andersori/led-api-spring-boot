@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import io.andersori.led.api.app.web.dto.AccountDto;
+import io.andersori.led.api.app.web.dto.AccountDTO;
 import io.andersori.led.api.domain.entity.Account;
 import io.andersori.led.api.domain.entity.UserLed;
 import io.andersori.led.api.domain.exception.ConflictException;
@@ -24,8 +22,6 @@ import io.andersori.led.api.resource.repository.UserLedRepository;
 
 @Service
 public class AccountServiceImp implements AccountService {
-
-	private Logger logger = LoggerFactory.getLogger(AccountServiceImp.class);
 
 	private AccountRepository accountRepository;
 	private UserLedRepository userLedRepository;
@@ -40,7 +36,7 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public AccountDto save(AccountDto data) throws DomainException {
+	public AccountDTO save(AccountDTO data) throws DomainException {
 		try {
 			Optional<Account> accountSaved = accountRepository.findById(data.getId());
 			if (accountSaved.isPresent()) {
@@ -53,7 +49,7 @@ public class AccountServiceImp implements AccountService {
 				Account acEntity = data.toEntity();
 				acEntity.getUser().setPassword(accountSaved.get().getUser().getPassword());
 
-				return new AccountDto().toDto(accountRepository.save(acEntity));
+				return new AccountDTO().toDTO(accountRepository.save(acEntity));
 			} else {
 				throw new NotFoundException(AccountService.class,
 						"Account with username " + data.getUsername() + " not found.");
@@ -61,100 +57,98 @@ public class AccountServiceImp implements AccountService {
 		} catch (NotFoundException | ConflictException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new DomainException(AccountService.class, e.getCause().getMessage(), e.getCause());
+			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
 		}
 	}
 
 	@Override
-	public void delete(Long id) {
-		accountRepository.deleteById(id);
+	public void delete(Long id) throws DomainException {
+		Optional<Account> account = accountRepository.findById(id);
+		if(account.isPresent()) {
+			accountRepository.deleteById(id);
+			return;
+		}
+		throw new NotFoundException(AccountService.class, "Account with id "+ id + " not found.");
 	}
 
 	@Override
-	public AccountDto find(Long id) throws DomainException {
+	public AccountDTO find(Long id) throws DomainException {
 		Optional<Account> account = accountRepository.findById(id);
 		if (account.isPresent()) {
-			return new AccountDto().toDto(account.get());
+			return new AccountDTO().toDTO(account.get());
 		}
 		throw new NotFoundException(AccountService.class, "Account with id " + id + " not found.");
 	}
 
 	@Override
-	public List<AccountDto> find(int pageNumber, int pageSize) {
+	public List<AccountDTO> find(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("user_id"));
 		return accountRepository.findAll(page).getContent().stream().map(ac -> {
-			return new AccountDto().toDto(ac);
+			return new AccountDTO().toDTO(ac);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<AccountDto> find(String firstName, int pageNumber, int pageSize) {
+	public List<AccountDTO> find(String firstName, int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("user_id"));
 		return accountRepository.findByFirstNameContaining(firstName, page).getContent().stream().map(ac -> {
-			return new AccountDto().toDto(ac);
+			return new AccountDTO().toDTO(ac);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<AccountDto> findAll() {
+	public List<AccountDTO> findAll() {
 		return accountRepository.findAll().stream().map(ac -> {
-			return new AccountDto().toDto(ac);
+			return new AccountDTO().toDTO(ac);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public AccountDto find(String username) throws DomainException {
+	public AccountDTO find(String username) throws DomainException {
 		Optional<Account> account = accountRepository.findByUserUsername(username);
 		if (account.isPresent()) {
-			return new AccountDto().toDto(account.get());
+			return new AccountDTO().toDTO(account.get());
 		}
 		throw new NotFoundException(AccountService.class, "Account with username " + username + " not found.");
 	}
 
 	@Override
-	public Optional<AccountDto> autenticate(String username, String password) {
-		Optional<UserLed> user = userLedRepository.findByUsernameAndPassword(username, password);
-		if (user.isPresent()) {
-			return Optional.of(new AccountDto().toDto(accountRepository.findById(user.get().getId()).get()));
-		}
-		return Optional.empty();
-	}
-
-	@Override
-	public Optional<AccountDto> changePasswordByUsername(String username, String password) {
+	public AccountDTO changePasswordByUsername(String username, String password) throws DomainException {
 		Optional<UserLed> user = userLedRepository.findByUsername(username);
 		if (user.isPresent()) {
-			if (userLedRepository.changePassword(username, password) != 0) {
-				return Optional.of(new AccountDto().toDto(accountRepository.findByUserUsername(username).get()));
+			if (userLedRepository.changePassword(username, passwordEncoder.encode(password)) != 0) {
+				return new AccountDTO().toDTO(accountRepository.findByUserUsername(username).get());
 			}
 		}
-		return Optional.empty();
+		throw new NotFoundException(AccountService.class, "Account with username " + username + " not found.");
 	}
 
 	@Override
-	public Optional<AccountDto> changePasswordByEmail(String email, String password) {
+	public AccountDTO changePasswordByEmail(String email, String password) throws DomainException {
 		Optional<Account> account = accountRepository.findByEmail(email);
 		if (account.isPresent()) {
-			if (userLedRepository.changePassword(account.get().getUser().getUsername(), password) != 0) {
-				return Optional.of(new AccountDto()
-						.toDto(accountRepository.findByUserUsername(account.get().getUser().getUsername()).get()));
+			if (userLedRepository.changePassword(account.get().getUser().getUsername(),
+					passwordEncoder.encode(password)) != 0) {
+				return new AccountDTO()
+						.toDTO(accountRepository.findByUserUsername(account.get().getUser().getUsername()).get());
 			}
 		}
-		return Optional.empty();
+		throw new NotFoundException(AccountService.class, "Account with email " + email + " not found.");
 	}
 
 	@Override
-	public Optional<AccountDto> register(AccountDto account, String password) {
-		try {
-			Account acEntity = account.toEntity();
-			acEntity.getUser().setPassword(passwordEncoder.encode(password));
-
-			accountRepository.save(acEntity);
-		} catch (Exception e) {
-			logger.info(e.getMessage());
-			return Optional.empty();
+	public AccountDTO register(AccountDTO account, String password) throws DomainException {
+		Optional<UserLed> user = userLedRepository.findByUsername(account.getUsername());
+		if (user.isEmpty()) {
+			try {
+				Account acEntity = account.toEntity();
+				acEntity.getUser().setPassword(passwordEncoder.encode(password));
+				return new AccountDTO().toDTO(accountRepository.save(acEntity));
+			} catch (Exception e) {
+				throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
+			}
 		}
-		return Optional.of(account);
+		throw new ConflictException(AccountService.class, "The username entered is already in use");
 	}
 
 	@Override
@@ -162,7 +156,7 @@ public class AccountServiceImp implements AccountService {
 		try {
 			return userLedRepository.getPassword(username);
 		} catch (Exception e) {
-			throw new DomainException(AccountService.class, e.getCause().getMessage(), e.getCause());
+			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
 		}
 	}
 

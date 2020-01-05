@@ -11,8 +11,8 @@ public class DomainException extends Exception {
 	private int httpStatusCode = HttpStatus.BAD_GATEWAY_502;
 	private Class<?> classType;
 
-	public DomainException(Class<?> classType, String message, Throwable cause) {
-		super(message, cause);
+	public DomainException(Class<?> classType, Throwable cause) {
+		super(cause.getMessage(), cause);
 		this.classType = classType;
 	}
 

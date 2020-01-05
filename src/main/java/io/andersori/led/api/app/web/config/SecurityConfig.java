@@ -40,8 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-		.csrf().disable()
+		.csrf().ignoringAntMatchers("/h2-console/**")
+		.and()
         .authorizeRequests()
+        	.antMatchers("/**").permitAll()
+        	.antMatchers("/h2-console/**").permitAll()
         	.antMatchers(PathConfig.VERSION + PathConfig.PROTECTED_PATH + "/**").hasRole("DEFAULT")
         	.antMatchers(PathConfig.VERSION + PathConfig.ADMIN_PATH + "/**").hasRole("ADMIN")
             .anyRequest().authenticated()

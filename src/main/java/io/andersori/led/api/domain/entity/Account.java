@@ -50,8 +50,7 @@ public class Account {
 	@Column(name = "email", unique = true)
 	private String email;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "event_id")
+	@OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<Event> events;
 
 	@Enumerated(EnumType.STRING)

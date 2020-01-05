@@ -2,6 +2,7 @@ package io.andersori.led.api.domain.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import io.andersori.led.api.app.web.dto.GroupDTO;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
 import io.andersori.led.api.domain.exception.DomainException;
@@ -26,47 +28,59 @@ public class GroupLedServiceImp implements GroupLedService {
 	}
 
 	@Override
-	public GroupLed save(GroupLed entity) throws DomainException {
+	public GroupDTO save(GroupDTO data) throws DomainException {
 		try {
-			return groupLedRepository.save(entity);
+			return new GroupDTO().toDTO(groupLedRepository.save(data.toEntity()));
 		} catch (Exception e) {
-			throw new DomainException(GroupLedService.class, e.getMessage(), e.getCause());
+			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
 		}
 	}
 
 	@Override
-	public void delete(Long id) {
-		groupLedRepository.deleteById(id);
-	}
-
-	@Override
-	public GroupLed find(Long id) throws NotFoundException {
-		Optional<GroupLed> group = groupLedRepository.findByEventId(id);
+	public void delete(Long id) throws DomainException {
+		Optional<GroupLed> group = groupLedRepository.findById(id);
 		if (group.isPresent()) {
-			return group.get();
+			groupLedRepository.deleteById(id);
 		}
 		throw new NotFoundException(GroupLedService.class, "Group with id " + id + " not found.");
 	}
 
 	@Override
-	public List<GroupLed> find(int pageNumber, int pageSize) {
+	public GroupDTO find(Long id) throws DomainException {
+		Optional<GroupLed> group = groupLedRepository.findById(id);
+		if (group.isPresent()) {
+			return new GroupDTO().toDTO(group.get());
+		}
+		throw new NotFoundException(GroupLedService.class, "Group with id " + id + " not found.");
+	}
+
+	@Override
+	public List<GroupDTO> find(int pageNumber, int pageSize) {
 		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("group_led_id"));
-		return groupLedRepository.findAll(page).getContent();
+		return groupLedRepository.findAll(page).getContent().stream().map(gp -> {
+			return new GroupDTO().toDTO(gp);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<GroupLed> findAll() {
-		return groupLedRepository.findAll();
+	public List<GroupDTO> findAll() {
+		return groupLedRepository.findAll().stream().map(gp -> {
+			return new GroupDTO().toDTO(gp);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<GroupLed> find(String name) {
-		return groupLedRepository.findByName(name);
+	public List<GroupDTO> find(String name) {
+		return groupLedRepository.findByName(name).stream().map(gp -> {
+			return new GroupDTO().toDTO(gp);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<GroupLed> find(Event event) {
-		return groupLedRepository.findByEventId(event.getId());
+	public List<GroupDTO> find(Event event) {
+		return groupLedRepository.findByEventId(event.getId()).stream().map(gp -> {
+			return new GroupDTO().toDTO(gp);
+		}).collect(Collectors.toList());
 	}
 
 }

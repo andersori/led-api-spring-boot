@@ -1,8 +1,8 @@
 package io.andersori.led.api.app.web.dto;
 
-public interface Dto<Entity, DtoT> {
+public interface DTO<Entity, DtoT> {
 	
-	DtoT toDto(Entity entity);
+	DtoT toDTO(Entity entity);
 	
 	Entity toEntity();
 	

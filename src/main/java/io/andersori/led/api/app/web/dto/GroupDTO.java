@@ -7,21 +7,21 @@ import io.andersori.led.api.domain.entity.GroupLed;
 import lombok.Data;
 
 @Data
-public class GroupDto implements Dto<GroupLed, GroupDto>{
+public class GroupDTO implements DTO<GroupLed, GroupDTO>{
 	
 	private Long id;
-	private EventDto event;
+	private EventDTO event;
 	private String name;
-	private List<TeamDto> teams;
+	private List<TeamDTO> teams;
 	
 	@Override
-	public GroupDto toDto(GroupLed entity) {
+	public GroupDTO toDTO(GroupLed entity) {
 		id = entity.getId();
-		event = new EventDto().toDto(entity.getEvent());
+		event = new EventDTO().toDTO(entity.getEvent());
 		name = entity.getName();
 		
 		teams = entity.getTeams().stream().map(t -> {
-			return new TeamDto().toDto(t);
+			return new TeamDTO().toDTO(t);
 		}).collect(Collectors.toList());
 		
 		return this;

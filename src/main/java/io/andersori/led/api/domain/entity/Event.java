@@ -33,7 +33,7 @@ public class Event {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "owner_account_id", nullable = false)
+	@JoinColumn(name = "owner_id", nullable = false)
 	private Account owner;
 
 	@Column(name = "name", length = 100, nullable = false)

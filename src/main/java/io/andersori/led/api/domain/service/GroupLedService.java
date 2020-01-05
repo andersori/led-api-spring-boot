@@ -1,13 +1,13 @@
 package io.andersori.led.api.domain.service;
 
-import java.util.Optional;
+import java.util.List;
 
+import io.andersori.led.api.app.web.dto.GroupDTO;
 import io.andersori.led.api.domain.entity.Event;
-import io.andersori.led.api.domain.entity.GroupLed;
 
-public interface GroupLedService extends Service<GroupLed> {
+public interface GroupLedService extends Service<GroupDTO> {
 	
-	Optional<GroupLed> find(String name);
+	List<GroupDTO> find(String name);
 	
-	Optional<GroupLed> find(Event event);
+	List<GroupDTO> find(Event event);
 }

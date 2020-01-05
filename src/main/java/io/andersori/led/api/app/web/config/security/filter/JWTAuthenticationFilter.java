@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.andersori.led.api.app.web.config.security.jwt.JWTToken;
 import io.andersori.led.api.app.web.config.security.util.SecurityUtil;
 import io.andersori.led.api.app.web.config.security.util.UserRequest;
+import io.andersori.led.api.app.web.controller.util.PathConfig;
 import io.andersori.led.api.app.web.response.ApiErrorResponse;
 import io.andersori.led.api.domain.BeanUtil;
 
@@ -31,7 +32,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private AuthenticationManager authenticationManager;
 
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
-		//setFilterProcessesUrl("/loginho");
+		setFilterProcessesUrl(PathConfig.VERSION + PathConfig.PUBLIC_PATH + "/login");
 		this.authenticationManager = authenticationManager;
 		this.jwtToken = BeanUtil.getBean(JWTToken.class);
 		this.mapper = BeanUtil.getBean(ObjectMapper.class);

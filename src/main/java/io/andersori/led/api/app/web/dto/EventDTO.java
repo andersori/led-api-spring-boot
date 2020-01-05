@@ -5,31 +5,30 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.andersori.led.api.domain.entity.Account;
 import io.andersori.led.api.domain.entity.Event;
 import lombok.Data;
 
 @Data
-public class EventDto implements Dto<Event, EventDto> {
+public class EventDTO implements DTO<Event, EventDTO> {
 
 	private Long id;
-	private AccountDto owner;
+	private String ownerUsername;
 	private String name;
 	private LocalDate date;
 	private String description;
-	private List<GroupDto> groups = Arrays.asList();
+	private List<GroupDTO> groups = Arrays.asList();
 
 	@Override
-	public EventDto toDto(Event entity) {
+	public EventDTO toDTO(Event entity) {
 		id = entity.getId();
-
-		owner = new AccountDto().toDto(entity.getOwner());
-
+		ownerUsername = entity.getOwner().getUser().getUsername();
 		name = entity.getName();
 		date = entity.getDate();
 		description = entity.getDescription();
 
 		groups = entity.getGroups().stream().map(gp -> {
-			return new GroupDto().toDto(gp);
+			return new GroupDTO().toDTO(gp);
 		}).collect(Collectors.toList());
 		
 		return this;
@@ -39,7 +38,20 @@ public class EventDto implements Dto<Event, EventDto> {
 	public Event toEntity() {
 		Event entity = new Event();
 		entity.setId(id);
-		entity.setOwner(owner.toEntity());
+		entity.setOwner(null);
+		entity.setName(name);
+		entity.setDate(date);
+		entity.setDescription(description);
+		entity.setGroups(groups.stream().map(gp -> {
+			return gp.toEntity();
+		}).collect(Collectors.toList()));
+		return entity;
+	}
+	
+	public Event toEntity(Account owner) {
+		Event entity = new Event();
+		entity.setId(id);
+		entity.setOwner(owner);
 		entity.setName(name);
 		entity.setDate(date);
 		entity.setDescription(description);

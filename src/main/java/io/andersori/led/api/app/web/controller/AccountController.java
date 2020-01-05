@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.andersori.led.api.app.web.controller.util.PathConfig;
-import io.andersori.led.api.app.web.dto.AccountDto;
+import io.andersori.led.api.app.web.dto.AccountDTO;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.AccountService;
 
@@ -26,13 +26,13 @@ public class AccountController {
 	}
 	
 	@GetMapping(PathConfig.ADMIN_PATH + PATH + "/{id}")
-	public AccountDto getAccount(@PathVariable Long id) throws DomainException {
-		AccountDto account = accountService.find(id); 
+	public AccountDTO getAccount(@PathVariable Long id) throws DomainException {
+		AccountDTO account = accountService.find(id); 
 		return account;
 	}
 	
 	@GetMapping(PathConfig.PROTECTED_PATH + PATH)
-	public List<AccountDto> getAccounts() {
+	public List<AccountDTO> getAccounts() {
 		return accountService.findAll();
 	}
 }

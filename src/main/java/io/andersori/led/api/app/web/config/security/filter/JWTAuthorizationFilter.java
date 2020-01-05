@@ -18,7 +18,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 
 import io.andersori.led.api.app.web.config.security.jwt.JWTToken;
 import io.andersori.led.api.app.web.config.security.util.SecurityUtil;
-import io.andersori.led.api.app.web.dto.AccountDto;
+import io.andersori.led.api.app.web.dto.AccountDTO;
 import io.andersori.led.api.domain.BeanUtil;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.AccountService;
@@ -58,7 +58,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 			try {
 				String user = jwtToken.validateToken(token);
 				if (user != null) {
-					AccountDto account = accountService.find(user);
+					AccountDTO account = accountService.find(user);
 					return new UsernamePasswordAuthenticationToken(user, token, SecurityUtil.getAuthorities(account.getRoles()));
 				}
 			} catch(JWTVerificationException e) {
