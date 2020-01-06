@@ -5,11 +5,12 @@ import java.util.List;
 import io.andersori.led.api.app.web.dto.TeamDTO;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
+import io.andersori.led.api.domain.entity.TeamLed;
 
-public interface TeamLedService extends Service<TeamDTO> {
+public interface TeamLedService extends Service<TeamLed, TeamDTO> {
 	
-	List<TeamDTO> find(GroupLed group);
+	List<TeamLed> find(GroupLed group);
 	
-	List<TeamDTO> find(Event event);
+	List<TeamLed> find(Event event);
 	
 }

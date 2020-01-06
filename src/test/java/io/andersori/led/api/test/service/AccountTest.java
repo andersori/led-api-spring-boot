@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.AfterAll;
@@ -33,7 +34,7 @@ class AccountTest {
 
 	@Autowired
 	private AccountService accountService;
-	
+
 	@Autowired
 	private PasswordEncoder enconder;
 
@@ -54,26 +55,25 @@ class AccountTest {
 		accountService.register(account1, "1234");
 		accountService.register(account2, "1234");
 	}
-	
+
 	@AfterAll
 	void cleanUser() {
 		try {
 			accountService.delete(accountService.find("test3").getId());
 			accountService.delete(accountService.find("test2").getId());
-			
+
 			System.out.println(accountService.findAll().size());
 		} catch (DomainException e) {
-			System.out.println("error");
+			logger.info(e.getMessage());
 		}
-		
+
 	}
 
 	@Test
 	@Order(1)
 	void find() {
 		try {
-			AccountDTO account;
-			account = accountService.find("test");
+			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
 			logger.info(account.toString());
 			assertTrue(account != null);
 		} catch (DomainException e) {
@@ -85,13 +85,13 @@ class AccountTest {
 	@Order(3)
 	void update() {
 		try {
-			AccountDTO account = accountService.find("test");
+			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
 			account.setFirstName("Test 2");
 			accountService.save(account);
-			
-			account = accountService.find("test");
+
+			account = new AccountDTO().toDTO(accountService.find("test"));
 			assertTrue(account.getFirstName().equals("Test 2"));
-		} catch(DomainException e) {
+		} catch (DomainException e) {
 			fail();
 		}
 	}
@@ -104,7 +104,7 @@ class AccountTest {
 
 			String password = accountService.getPassword("test");
 			assertTrue(enconder.matches("12345", password));
-		} catch(DomainException e) {
+		} catch (DomainException e) {
 			fail();
 		}
 	}
@@ -117,7 +117,7 @@ class AccountTest {
 
 			String password = accountService.getPassword("test");
 			assertTrue(enconder.matches("123", password));
-		} catch(DomainException e) {
+		} catch (DomainException e) {
 			fail();
 		}
 	}
@@ -125,47 +125,52 @@ class AccountTest {
 	@Test
 	@Order(6)
 	void findWithPages() {
-		List<AccountDTO> acs = accountService.find(0, 5);
+		List<AccountDTO> acs = accountService.find(0, 5).stream().map(a -> new AccountDTO().toDTO(a))
+				.collect(Collectors.toList());
 		assertTrue(acs.size() == 2);
 	}
 
 	@Test
 	@Order(7)
-	void findAll() {
-		List<AccountDTO> acs = accountService.findAll();
+	void findPerFirstName() {
+		List<AccountDTO> acs = accountService.find("Test", 0, 5).stream().map(a -> new AccountDTO().toDTO(a))
+				.collect(Collectors.toList());
 		assertTrue(acs.size() == 2);
 	}
 
 	@Test
 	@Order(8)
-	void findPerFirstName() {
-		List<AccountDTO> acs = accountService.find("Test", 0, 5);
-		assertTrue(acs.size() == 2);
-	}
-
-	@Test
-	@Order(9)
 	void updateWithException1() {
 		try {
-			AccountDTO account = accountService.find("test");
+			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
 			account.setUsername("test2");
 			accountService.save(account);
-		} catch(DomainException e) {
+		} catch (DomainException e) {
 			logger.info(e.getMessage());
 			assertTrue(e.getHttpStatusCode() == HttpStatus.CONFLICT_409);
 		}
 	}
 
 	@Test
-	@Order(10)
+	@Order(9)
 	void updateUsername() throws DomainException {
 		try {
-			AccountDTO account = accountService.find("test");
+			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
 			account.setUsername("test3");
 			accountService.save(account);
 			assertTrue(accountService.find("test3") != null);
-		} catch(DomainException e) {
+		} catch (DomainException e) {
+			logger.info(e.getMessage());
 			fail();
 		}
+	}
+	
+	@Test
+	@Order(10)
+	void findAll() {
+		List<AccountDTO> acs = accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a))
+				.collect(Collectors.toList());
+		logger.info(acs.toString());
+		assertTrue(acs.size() == 2);
 	}
 }

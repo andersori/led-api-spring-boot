@@ -25,7 +25,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
-			AccountDTO account = accountService.find(username);
+			AccountDTO account = new AccountDTO().toDTO(accountService.find(username));
 			String password = accountService.getPassword(username);
 			return new User(account.getUsername(), password, SecurityUtil.getAuthorities(account.getRoles()));
 		} catch (DomainException e) {

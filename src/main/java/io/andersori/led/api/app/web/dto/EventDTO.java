@@ -30,24 +30,10 @@ public class EventDTO implements DTO<Event, EventDTO> {
 		groups = entity.getGroups().stream().map(gp -> {
 			return new GroupDTO().toDTO(gp);
 		}).collect(Collectors.toList());
-		
+
 		return this;
 	}
 
-	@Override
-	public Event toEntity() {
-		Event entity = new Event();
-		entity.setId(id);
-		entity.setOwner(null);
-		entity.setName(name);
-		entity.setDate(date);
-		entity.setDescription(description);
-		entity.setGroups(groups.stream().map(gp -> {
-			return gp.toEntity();
-		}).collect(Collectors.toList()));
-		return entity;
-	}
-	
 	public Event toEntity(Account owner) {
 		Event entity = new Event();
 		entity.setId(id);
@@ -56,9 +42,10 @@ public class EventDTO implements DTO<Event, EventDTO> {
 		entity.setDate(date);
 		entity.setDescription(description);
 		entity.setGroups(groups.stream().map(gp -> {
-			return gp.toEntity();
+			return gp.toEntity(entity);
 		}).collect(Collectors.toList()));
 		return entity;
+
 	}
 
 }

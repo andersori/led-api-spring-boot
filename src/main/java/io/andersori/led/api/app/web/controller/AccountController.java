@@ -1,6 +1,7 @@
 package io.andersori.led.api.app.web.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +28,12 @@ public class AccountController {
 	
 	@GetMapping(PathConfig.ADMIN_PATH + PATH + "/{id}")
 	public AccountDTO getAccount(@PathVariable Long id) throws DomainException {
-		AccountDTO account = accountService.find(id); 
+		AccountDTO account = new AccountDTO().toDTO(accountService.find(id)); 
 		return account;
 	}
 	
 	@GetMapping(PathConfig.PROTECTED_PATH + PATH)
 	public List<AccountDTO> getAccounts() {
-		return accountService.findAll();
+		return accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a)).collect(Collectors.toList());
 	}
 }

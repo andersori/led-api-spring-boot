@@ -27,6 +27,9 @@ public class TeamLed {
 
 	@Column(name = "name", length = 200, nullable = false)
 	private String name;
+	
+	@Column(name = "verified", nullable = false)
+	private boolean verified;
 
 	@Column(name = "participants", length = 400)
 	private String participants;
@@ -37,7 +40,7 @@ public class TeamLed {
 	@Column(name = "secret", length = 5, nullable = false)
 	private String secret;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "group_led_id")
 	private GroupLed group;
 

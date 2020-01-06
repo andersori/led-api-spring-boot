@@ -1,41 +1,33 @@
 package io.andersori.led.api.app.web.dto;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
+import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
 import lombok.Data;
 
 @Data
-public class GroupDTO implements DTO<GroupLed, GroupDTO>{
-	
+public class GroupDTO implements DTO<GroupLed, GroupDTO> {
+
 	private Long id;
-	private EventDTO event;
+	private Long eventId;
 	private String name;
-	private List<TeamDTO> teams;
-	
+
 	@Override
 	public GroupDTO toDTO(GroupLed entity) {
 		id = entity.getId();
-		event = new EventDTO().toDTO(entity.getEvent());
+		eventId = entity.getEvent().getId();
 		name = entity.getName();
-		
-		teams = entity.getTeams().stream().map(t -> {
-			return new TeamDTO().toDTO(t);
-		}).collect(Collectors.toList());
-		
 		return this;
 	}
-	@Override
-	public GroupLed toEntity() {
+
+	public GroupLed toEntity(Event event) {
 		GroupLed entity = new GroupLed();
 		entity.setId(id);
-		entity.setEvent(event.toEntity());
+		entity.setEvent(event);
 		entity.setName(name);
-		entity.setTeams(teams.stream().map(t -> {
-			return t.toEntity();
-		}).collect(Collectors.toList()));
+		entity.setTeams(Arrays.asList());
 		return entity;
 	}
-	
+
 }

@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -53,6 +56,31 @@ public class EventTest {
 		accountService.register(account1, "1234");
 		accountService.register(account2, "1234");
 	}
+	
+	@AfterAll
+	void clean() {
+			List<AccountDTO> accounts = accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a))
+					.collect(Collectors.toList());;
+			List<EventDTO> events = eventService.findAll().stream().map(a -> new EventDTO().toDTO(a))
+					.collect(Collectors.toList());;
+			
+			accounts.forEach(a -> {
+				try {
+					accountService.delete(a.getId());
+				} catch (DomainException e) {
+					e.printStackTrace();
+				}
+			});
+			
+			events.forEach(e -> {
+				try {
+					eventService.delete(e.getId());
+				} catch (DomainException ex) {
+					ex.printStackTrace();
+				}
+			});
+			
+	}
 
 	@Test
 	@Order(1)
@@ -75,9 +103,7 @@ public class EventTest {
 	@Order(2)
 	void getAllEventsOfOneAccount() {
 		try {
-			AccountDTO account = accountService.find("test");
-			logger.info(account.toString());
-			assertTrue(account.getEvents().size() == 1);
+			assertTrue(eventService.findByUser("test").size() == 1);
 		} catch (DomainException e) {
 			fail();
 		}
@@ -87,8 +113,7 @@ public class EventTest {
 	@Order(3)
 	void updateEvent() {
 		try {
-			AccountDTO account = accountService.find("test");
-			EventDTO event = account.getEvents().get(0);
+			EventDTO event = new EventDTO().toDTO(eventService.findByUser("test").get(0));
 			event.setDescription("New desc");
 			eventService.save(event);
 
@@ -102,12 +127,11 @@ public class EventTest {
 	@Order(4)
 	void delete() {
 		try {
-			AccountDTO account = accountService.find("test");
-			EventDTO event = account.getEvents().get(0);
+			EventDTO event = new EventDTO().toDTO(eventService.findByUser("test").get(0));
 
 			eventService.delete(event.getId());
 
-			assertTrue(accountService.find("test").getEvents().size() == 0);
+			assertTrue(eventService.findByUser("test").size() == 0);
 		} catch (DomainException e) {
 			fail();
 		}
@@ -118,7 +142,7 @@ public class EventTest {
 	void exception1() {
 		try {
 			@SuppressWarnings("unused")
-			EventDTO event = eventService.find(1L);
+			EventDTO event = new EventDTO().toDTO(eventService.find(1L));
 			fail();
 		} catch (DomainException e) {
 			assertTrue(true);
@@ -161,13 +185,11 @@ public class EventTest {
 			eventService.save(event1);
 			eventService.save(event2);
 
-			AccountDTO ac1 = accountService.find("test");
-			AccountDTO ac2 = accountService.find("test2");
-
-			assertTrue(ac1.getEvents().size() == 1 && ac2.getEvents().size() == 1 && eventService.findAll().size() == 2);
+			assertTrue(eventService.findByUser("test").size() == 1 && eventService.findByUser("test2").size() == 1 && eventService.findAll().size() == 2);
 		} catch (DomainException e) {
+			logger.info(e.getMessage());
 			fail();
 		}
 	}
-
+	
 }

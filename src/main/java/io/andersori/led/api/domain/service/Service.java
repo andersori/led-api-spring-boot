@@ -4,9 +4,9 @@ import java.util.List;
 
 import io.andersori.led.api.domain.exception.DomainException;
 
-public interface Service<T> {
+public interface Service<T, DtoType> {
 
-	T save(T data) throws DomainException;
+	T save(DtoType data) throws DomainException;
 
 	void delete(Long id) throws DomainException;
 

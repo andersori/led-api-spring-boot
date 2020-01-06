@@ -50,7 +50,7 @@ public class Account {
 	@Column(name = "email", unique = true)
 	private String email;
 
-	@OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<Event> events;
 
 	@Enumerated(EnumType.STRING)

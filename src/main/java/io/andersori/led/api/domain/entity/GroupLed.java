@@ -2,9 +2,9 @@ package io.andersori.led.api.domain.entity;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,14 +31,14 @@ public class GroupLed {
 	@Column(name = "group_led_id")
 	private Long id;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "event_id", nullable = false)
 	private Event event;
 
 	@Column(name = "name", length = 100, nullable = false)
 	private String name;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "group_led_id")
 	private List<TeamLed> teams;
