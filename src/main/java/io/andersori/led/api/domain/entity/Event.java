@@ -3,9 +3,9 @@ package io.andersori.led.api.domain.entity;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -45,7 +45,7 @@ public class Event {
 	@Column(name = "description", length = 300)
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "event_id")
 	private List<GroupLed> groups;

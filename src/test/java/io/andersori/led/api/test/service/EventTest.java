@@ -1,7 +1,7 @@
 package io.andersori.led.api.test.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,11 +33,14 @@ public class EventTest {
 
 	private final Logger logger = LoggerFactory.getLogger(EventTest.class);
 
-	@Autowired
-	EventService eventService;
+	private EventService eventService;
+	private AccountService accountService;
 
 	@Autowired
-	private AccountService accountService;
+	public EventTest(EventService eventService, AccountService accountService) {
+		this.eventService = eventService;
+		this.accountService = accountService;
+	}
 
 	@BeforeAll
 	void registerUser() throws DomainException {
@@ -56,103 +59,83 @@ public class EventTest {
 		accountService.register(account1, "1234");
 		accountService.register(account2, "1234");
 	}
-	
+
 	@AfterAll
 	void clean() {
-			List<AccountDTO> accounts = accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a))
-					.collect(Collectors.toList());;
-			List<EventDTO> events = eventService.findAll().stream().map(a -> new EventDTO().toDTO(a))
-					.collect(Collectors.toList());;
-			
-			accounts.forEach(a -> {
-				try {
-					accountService.delete(a.getId());
-				} catch (DomainException e) {
-					e.printStackTrace();
-				}
-			});
-			
-			events.forEach(e -> {
-				try {
-					eventService.delete(e.getId());
-				} catch (DomainException ex) {
-					ex.printStackTrace();
-				}
-			});
-			
+		List<AccountDTO> accounts = accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a))
+				.collect(Collectors.toList());
+		List<EventDTO> events = eventService.findAll().stream().map(a -> new EventDTO().toDTO(a))
+				.collect(Collectors.toList());
+
+		events.forEach(e -> {
+			try {
+				eventService.delete(e.getId());
+			} catch (DomainException ex) {
+				ex.printStackTrace();
+			}
+		});
+
+		accounts.forEach(a -> {
+			try {
+				accountService.delete(a.getId());
+			} catch (DomainException e) {
+				e.printStackTrace();
+			}
+		});
+
 	}
 
 	@Test
 	@Order(1)
-	void createEvent1() {
-		try {
-			EventDTO event = new EventDTO();
-			event.setDate(LocalDate.of(2020, 3, 2));
-			event.setDescription("desc");
-			event.setName("Maratona");
-			event.setOwnerUsername("test");
+	void createEvent1() throws DomainException {
+		EventDTO event = new EventDTO();
+		event.setDate(LocalDate.of(2020, 3, 2));
+		event.setDescription("desc");
+		event.setName("Maratona");
+		event.setOwnerUsername("test");
 
-			eventService.save(event);
-			assertTrue(true);
-		} catch (DomainException e) {
-			fail();
-		}
+		eventService.save(event);
+		assertTrue(true);
 	}
 
 	@Test
 	@Order(2)
-	void getAllEventsOfOneAccount() {
-		try {
-			assertTrue(eventService.findByUser("test").size() == 1);
-		} catch (DomainException e) {
-			fail();
-		}
+	void getAllEventsOfOneAccount() throws DomainException {
+		assertTrue(eventService.findByUser("test").size() == 1);
 	}
 
 	@Test
 	@Order(3)
-	void updateEvent() {
-		try {
-			EventDTO event = new EventDTO().toDTO(eventService.findByUser("test").get(0));
-			event.setDescription("New desc");
-			eventService.save(event);
+	void updateEvent() throws DomainException {
+		EventDTO event = new EventDTO().toDTO(eventService.findByUser("test").get(0));
+		event.setDescription("New desc");
+		eventService.save(event);
 
-			assertTrue(eventService.find(event.getId()).getDescription().equals("New desc"));
-		} catch (DomainException e) {
-			fail();
-		}
+		assertTrue(eventService.find(event.getId()).getDescription().equals("New desc"));
 	}
 
 	@Test
 	@Order(4)
-	void delete() {
-		try {
-			EventDTO event = new EventDTO().toDTO(eventService.findByUser("test").get(0));
+	void delete() throws DomainException {
+		EventDTO event = new EventDTO().toDTO(eventService.findByUser("test").get(0));
 
-			eventService.delete(event.getId());
+		eventService.delete(event.getId());
 
-			assertTrue(eventService.findByUser("test").size() == 0);
-		} catch (DomainException e) {
-			fail();
-		}
+		assertTrue(eventService.findByUser("test").size() == 0);
 	}
 
 	@Test
 	@Order(5)
 	void exception1() {
-		try {
-			@SuppressWarnings("unused")
-			EventDTO event = new EventDTO().toDTO(eventService.find(1L));
-			fail();
-		} catch (DomainException e) {
-			assertTrue(true);
-		}
+		logger.warn(assertThrows(DomainException.class, () -> {
+			eventService.find(10L);
+		}).getMessage());
 	}
 
 	@Test
 	@Order(6)
 	void exception2() {
-		try {
+		logger.warn(assertThrows(DomainException.class, () -> {
 			EventDTO event = new EventDTO();
 			event.setDate(LocalDate.of(2020, 3, 2));
 			event.setDescription("desc");
@@ -160,36 +143,29 @@ public class EventTest {
 			event.setOwnerUsername("test_1");
 
 			eventService.save(event);
-			fail();
-		} catch (DomainException e) {
-			assertTrue(true);
-		}
+		}).getMessage());
 	}
 
 	@Test
 	@Order(7)
-	void createEvent2() {
-		try {
-			EventDTO event1 = new EventDTO();
-			event1.setDate(LocalDate.of(2020, 3, 2));
-			event1.setDescription("desc");
-			event1.setName("Maratona");
-			event1.setOwnerUsername("test");
+	void createEvent2() throws DomainException {
+		EventDTO event1 = new EventDTO();
+		event1.setDate(LocalDate.of(2020, 3, 2));
+		event1.setDescription("desc");
+		event1.setName("Maratona");
+		event1.setOwnerUsername("test");
 
-			EventDTO event2 = new EventDTO();
-			event2.setDate(LocalDate.of(2020, 3, 2));
-			event2.setDescription("desc");
-			event2.setName("Maratona");
-			event2.setOwnerUsername("test2");
+		EventDTO event2 = new EventDTO();
+		event2.setDate(LocalDate.of(2020, 3, 2));
+		event2.setDescription("desc");
+		event2.setName("Maratona");
+		event2.setOwnerUsername("test2");
 
-			eventService.save(event1);
-			eventService.save(event2);
+		eventService.save(event1);
+		eventService.save(event2);
 
-			assertTrue(eventService.findByUser("test").size() == 1 && eventService.findByUser("test2").size() == 1 && eventService.findAll().size() == 2);
-		} catch (DomainException e) {
-			logger.info(e.getMessage());
-			fail();
-		}
+		assertTrue(eventService.findByUser("test").size() == 1 && eventService.findByUser("test2").size() == 1
+				&& eventService.findAll().size() == 2);
 	}
-	
+
 }

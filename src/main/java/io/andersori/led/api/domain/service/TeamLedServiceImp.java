@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import io.andersori.led.api.app.web.dto.EventDTO;
+import io.andersori.led.api.app.web.dto.GroupDTO;
 import io.andersori.led.api.app.web.dto.TeamDTO;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
@@ -37,7 +39,7 @@ public class TeamLedServiceImp implements TeamLedService {
 		try {
 			Event event = eventService.find(data.getEventId());
 			GroupLed group = null;
-			if(data.getGroupId() != null) {
+			if (data.getGroupId() != null) {
 				group = groupService.find(data.getGroupId());
 			}
 			return teamLedRepository.save(data.toEntity(group, event));
@@ -76,13 +78,28 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	public List<TeamLed> find(GroupLed group) {
+	public List<TeamLed> find(GroupDTO group) throws DomainException {
+		try {
+			groupService.find(group.getId());
+		} catch (DomainException e) {
+			throw e;
+		}
 		return teamLedRepository.findByGroupId(group.getId());
 	}
 
 	@Override
-	public List<TeamLed> find(Event event) {
+	public List<TeamLed> find(EventDTO event) throws DomainException {
+		try {
+			eventService.find(event.getId());
+		} catch (DomainException e) {
+			throw e;
+		}
 		return teamLedRepository.findByEventId(event.getId());
+	}
+
+	@Override
+	public void updateGroup(TeamDTO team) {
+		teamLedRepository.changeGroup(team.getId(), team.getGroupId());
 	}
 
 }

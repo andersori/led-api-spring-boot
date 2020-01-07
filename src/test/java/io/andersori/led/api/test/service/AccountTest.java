@@ -1,12 +1,11 @@
 package io.andersori.led.api.test.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.jetty.http.HttpStatus;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -32,11 +31,14 @@ class AccountTest {
 
 	private final Logger logger = LoggerFactory.getLogger(AccountTest.class);
 
-	@Autowired
 	private AccountService accountService;
+	private PasswordEncoder enconder;
 
 	@Autowired
-	private PasswordEncoder enconder;
+	public AccountTest(AccountService accountService, PasswordEncoder enconder) {
+		this.accountService = accountService;
+		this.enconder = enconder;
+	}
 
 	@BeforeAll
 	void registerUser() throws DomainException {
@@ -57,69 +59,45 @@ class AccountTest {
 	}
 
 	@AfterAll
-	void cleanUser() {
-		try {
-			accountService.delete(accountService.find("test3").getId());
-			accountService.delete(accountService.find("test2").getId());
-
-			System.out.println(accountService.findAll().size());
-		} catch (DomainException e) {
-			logger.info(e.getMessage());
-		}
-
+	void cleanUser() throws DomainException {
+		accountService.delete(accountService.find("test3").getId());
+		accountService.delete(accountService.find("test2").getId());
 	}
 
 	@Test
 	@Order(1)
-	void find() {
-		try {
-			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
-			logger.info(account.toString());
-			assertTrue(account != null);
-		} catch (DomainException e) {
-			fail();
-		}
+	void find() throws DomainException {
+		AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
+		assertTrue(account != null);
 	}
 
 	@Test
 	@Order(3)
-	void update() {
-		try {
-			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
-			account.setFirstName("Test 2");
-			accountService.save(account);
+	void update() throws DomainException {
+		AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
+		account.setFirstName("Test 2");
+		accountService.save(account);
 
-			account = new AccountDTO().toDTO(accountService.find("test"));
-			assertTrue(account.getFirstName().equals("Test 2"));
-		} catch (DomainException e) {
-			fail();
-		}
+		account = new AccountDTO().toDTO(accountService.find("test"));
+		assertTrue(account.getFirstName().equals("Test 2"));
 	}
 
 	@Test
 	@Order(4)
-	void changePasswordByEmail() {
-		try {
-			accountService.changePasswordByEmail("email@email.com", "12345");
+	void changePasswordByEmail() throws DomainException {
+		accountService.changePasswordByEmail("email@email.com", "12345");
 
-			String password = accountService.getPassword("test");
-			assertTrue(enconder.matches("12345", password));
-		} catch (DomainException e) {
-			fail();
-		}
+		String password = accountService.getPassword("test");
+		assertTrue(enconder.matches("12345", password));
 	}
 
 	@Test
 	@Order(5)
-	void changePasswordByUsername() {
-		try {
-			accountService.changePasswordByUsername("test", "123");
+	void changePasswordByUsername() throws DomainException {
+		accountService.changePasswordByUsername("test", "123");
 
-			String password = accountService.getPassword("test");
-			assertTrue(enconder.matches("123", password));
-		} catch (DomainException e) {
-			fail();
-		}
+		String password = accountService.getPassword("test");
+		assertTrue(enconder.matches("123", password));
 	}
 
 	@Test
@@ -141,30 +119,23 @@ class AccountTest {
 	@Test
 	@Order(8)
 	void updateWithException1() {
-		try {
+		logger.warn(assertThrows(DomainException.class, () -> {
 			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
 			account.setUsername("test2");
 			accountService.save(account);
-		} catch (DomainException e) {
-			logger.info(e.getMessage());
-			assertTrue(e.getHttpStatusCode() == HttpStatus.CONFLICT_409);
-		}
+		}).getMessage());
 	}
 
 	@Test
 	@Order(9)
 	void updateUsername() throws DomainException {
-		try {
-			AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
-			account.setUsername("test3");
-			accountService.save(account);
-			assertTrue(accountService.find("test3") != null);
-		} catch (DomainException e) {
-			logger.info(e.getMessage());
-			fail();
-		}
+		AccountDTO account = new AccountDTO().toDTO(accountService.find("test"));
+		account.setUsername("test3");
+		accountService.save(account);
+		assertTrue(accountService.find("test3") != null);
+
 	}
-	
+
 	@Test
 	@Order(10)
 	void findAll() {

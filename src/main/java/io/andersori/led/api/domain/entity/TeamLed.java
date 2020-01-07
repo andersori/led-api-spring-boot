@@ -1,6 +1,5 @@
 package io.andersori.led.api.domain.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,15 +36,15 @@ public class TeamLed {
 	@Column(name = "score")
 	private Integer score;
 
-	@Column(name = "secret", length = 5, nullable = false)
+	@Column(name = "secret", length = 6, nullable = false)
 	private String secret;
 
 	@OneToOne
 	@JoinColumn(name = "group_led_id")
 	private GroupLed group;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "event_id", nullable = false)
+	@OneToOne
+	@JoinColumn(name = "event_id", nullable = false, updatable = false)
 	private Event event;
 	
 }

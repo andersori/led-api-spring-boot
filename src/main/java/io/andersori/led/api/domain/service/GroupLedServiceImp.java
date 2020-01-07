@@ -45,6 +45,7 @@ public class GroupLedServiceImp implements GroupLedService {
 		Optional<GroupLed> group = groupLedRepository.findById(id);
 		if (group.isPresent()) {
 			groupLedRepository.deleteById(id);
+			return;
 		}
 		throw new NotFoundException(GroupLedService.class, "Group with id " + id + " not found.");
 	}
@@ -75,7 +76,12 @@ public class GroupLedServiceImp implements GroupLedService {
 	}
 
 	@Override
-	public List<GroupLed> find(EventDTO event) {
+	public List<GroupLed> find(EventDTO event) throws DomainException {
+		try {
+			eventService.find(event.getId());
+		} catch(DomainException e) {
+			throw e;
+		}
 		return groupLedRepository.findByEventId(event.getId());
 	}
 

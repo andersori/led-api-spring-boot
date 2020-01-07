@@ -11,4 +11,5 @@ public interface GroupLedRepository extends JpaRepository<GroupLed, Long> {
 	List<GroupLed> findByName(String name);
 	
 	List<GroupLed> findByEventId(Long id);
+	
 }

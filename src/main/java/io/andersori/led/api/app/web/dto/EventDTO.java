@@ -1,7 +1,7 @@
 package io.andersori.led.api.app.web.dto;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +17,7 @@ public class EventDTO implements DTO<Event, EventDTO> {
 	private String name;
 	private LocalDate date;
 	private String description;
-	private List<GroupDTO> groups = Arrays.asList();
+	private List<GroupDTO> groups = new ArrayList<GroupDTO>();
 
 	@Override
 	public EventDTO toDTO(Event entity) {
