@@ -41,7 +41,7 @@ class AccountTest {
 	}
 
 	@BeforeAll
-	void registerUser() throws DomainException {
+	void init() throws DomainException {
 		AccountDTO account1 = new AccountDTO();
 		account1.setUsername("test");
 		account1.setEmail("email@email.com");
@@ -59,7 +59,7 @@ class AccountTest {
 	}
 
 	@AfterAll
-	void cleanUser() throws DomainException {
+	void clean() throws DomainException {
 		accountService.delete(accountService.find("test3").getId());
 		accountService.delete(accountService.find("test2").getId());
 	}

@@ -43,7 +43,7 @@ public class EventTest {
 	}
 
 	@BeforeAll
-	void registerUser() throws DomainException {
+	void init() throws DomainException {
 		AccountDTO account1 = new AccountDTO();
 		account1.setUsername("test");
 		account1.setEmail("email@email.com");

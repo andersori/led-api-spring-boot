@@ -38,6 +38,10 @@ public abstract class HelperFacade {
 	public static synchronized void groupSelector(TeamDTO team, EventDTO event) throws DomainException {
 		try {
 			if (team.getId() != null) {
+				if(!team.isVerified()) {
+					throw new DomainException(HelperFacade.class, "Team " + team.getName() + " unverified.");
+				}
+				
 				List<GroupDTO> groups = GROUP_SERVICE.find(event).stream().map(g -> new GroupDTO().toDTO(g))
 						.collect(Collectors.toList());
 
@@ -62,10 +66,8 @@ public abstract class HelperFacade {
 
 				GroupDTO group = null;
 				if (allowedGroups.size() > 0) {
-					System.out.println("ok");
 					group = allowedGroups.get(RAND.nextInt(allowedGroups.size()));
 				} else {
-					System.out.println("notok");
 					group = groups.get(RAND.nextInt(groups.size()));
 				}
 				team.setGroupId(group.getId());
@@ -78,16 +80,6 @@ public abstract class HelperFacade {
 			throw e;
 		} catch (Exception e) {
 			throw new DomainException(HelperFacade.class, e.getCause() != null ? e.getCause() : e);
-		}
-	}
-
-	public static synchronized void groupSelector(List<TeamDTO> teams, EventDTO event) throws DomainException {
-		try {
-			for (TeamDTO t : teams) {
-				groupSelector(t, event);
-			}
-		} catch (DomainException e) {
-			throw e;
 		}
 	}
 }

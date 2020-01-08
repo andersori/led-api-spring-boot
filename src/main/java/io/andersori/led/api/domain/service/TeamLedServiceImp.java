@@ -53,6 +53,7 @@ public class TeamLedServiceImp implements TeamLedService {
 		Optional<TeamLed> team = teamLedRepository.findById(id);
 		if (team.isPresent()) {
 			teamLedRepository.deleteById(id);
+			return;
 		}
 		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
 	}
