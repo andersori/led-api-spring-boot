@@ -83,33 +83,18 @@
 
 	<profiles>
 		<profile>
-			<id>test</id>
+			<id>dev</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.h2database</groupId>
-					<artifactId>h2</artifactId>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>dev</id>
 			<properties>
 				<spring-boot.run.profiles>dev</spring-boot.run.profiles>
-				<maven.test.skip>true</maven.test.skip>
 			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>com.h2database</groupId>
 					<artifactId>h2</artifactId>
 					<scope>runtime</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.liquibase</groupId>
-					<artifactId>liquibase-core</artifactId>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -125,10 +110,6 @@
 					<artifactId>postgresql</artifactId>
 					<scope>runtime</scope>
 				</dependency>
-				<dependency>
-					<groupId>org.liquibase</groupId>
-					<artifactId>liquibase-core</artifactId>
-				</dependency>
 			</dependencies>
 			<build>
 				<resources>
@@ -139,6 +120,16 @@
 						</excludes>
 					</resource>
 				</resources>
+				<plugins>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<version>3.8.4</version>
+						<configuration>
+							<propertyFile>${basedir}/src/main/resources/liquibase.properties</propertyFile>
+						</configuration>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>

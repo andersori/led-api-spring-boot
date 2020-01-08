@@ -97,6 +97,7 @@ class AccountTest {
 		accountService.changePasswordByUsername("test", "123");
 
 		String password = accountService.getPassword("test");
+		logger.info(password);
 		assertTrue(enconder.matches("123", password));
 	}
 

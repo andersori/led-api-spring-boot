@@ -18,7 +18,7 @@ import io.andersori.led.api.domain.service.AccountService;
 @RequestMapping(PathConfig.VERSION)
 public class AccountController {
 	
-	private final String PATH = "/accounts";
+	private static final String PATH = "/accounts";
 	private AccountService accountService;
 	
 	@Autowired

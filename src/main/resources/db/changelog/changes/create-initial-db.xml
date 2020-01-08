@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="1" author="andersori">
+		<createTable tableName="user_led">
+			<column name="user_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="username" type="VARCHAR(100)" />
+			<column name="password" type="VARCHAR(60)" />
+		</createTable>
+		<addPrimaryKey columnNames="user_id"
+			tableName="user_led" constraintName="user_led_pkey" />
+		<addUniqueConstraint columnNames="username"
+			tableName="user_led" constraintName="uk_user_led_username" />
+
+		<createTable tableName="account">
+			<column name="user_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="first_name" type="VARCHAR(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="last_name" type="VARCHAR(30)" />
+			<column name="email" type="VARCHAR(250)" />
+			<column name="last_login" type="TIMESTAMP WITHOUT TIME ZONE" />
+		</createTable>
+		<addPrimaryKey columnNames="user_id" tableName="account"
+			constraintName="account_pkey" />
+		<addUniqueConstraint columnNames="email"
+			tableName="account" constraintName="uk_account_email" />
+		<addForeignKeyConstraint
+			baseColumnNames="user_id" baseTableName="account"
+			referencedColumnNames="user_id" referencedTableName="user_led"
+			constraintName="fk_account_user_id" />
+
+		<createTable tableName="role_led">
+			<column name="user_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="role" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="user_id, role"
+			tableName="role_led" constraintName="roles_pkey" />
+		<addForeignKeyConstraint
+			baseColumnNames="user_id" baseTableName="role_led"
+			referencedColumnNames="user_id" referencedTableName="user_led"
+			constraintName="fk_role_led_user_id" />
+
+		<createTable tableName="event">
+			<column name="event_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="date" type="DATE" />
+			<column name="description" type="VARCHAR(300)" />
+			<column name="name" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="owner_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="event_id" tableName="event"
+			constraintName="event_pkey" />
+		<addForeignKeyConstraint
+			baseColumnNames="owner_id" baseTableName="event"
+			referencedColumnNames="user_id" referencedTableName="account"
+			constraintName="fk_event_user_id" />
+
+		<createTable tableName="group_led">
+			<column name="group_led_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="event_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="group_led_id"
+			tableName="group_led" constraintName="group_led_pkey" />
+		<addForeignKeyConstraint
+			baseColumnNames="event_id" baseTableName="group_led"
+			referencedColumnNames="event_id" referencedTableName="event"
+			constraintName="fk_group_led_event_id" />
+
+		<createTable tableName="team_led">
+			<column name="team_led_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="participants" type="VARCHAR(400)" />
+			<column name="score" type="INTEGER" />
+			<column name="secret" type="VARCHAR(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="verified" type="BOOLEAN">
+				<constraints nullable="false" />
+			</column>
+			<column name="event_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="group_led_id" type="BIGINT" />
+		</createTable>
+		<addPrimaryKey columnNames="team_led_id"
+			tableName="team_led" constraintName="team_led_pkey"></addPrimaryKey>
+		<addForeignKeyConstraint
+			baseColumnNames="event_id" baseTableName="team_led"
+			referencedColumnNames="event_id" referencedTableName="event"
+			constraintName="fk_team_led_event_id" />
+		<addForeignKeyConstraint
+			baseColumnNames="group_led_id" baseTableName="team_led"
+			referencedColumnNames="group_led_id" referencedTableName="group_led"
+			constraintName="fk_team_led_group_led_id" />
+	</changeSet>
+
+</databaseChangeLog>

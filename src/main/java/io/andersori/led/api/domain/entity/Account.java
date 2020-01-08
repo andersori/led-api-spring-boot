@@ -47,7 +47,7 @@ public class Account {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(name = "email", unique = true)
+	@Column(name = "email", length = 250, unique = true)
 	private String email;
 
 	@OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -55,7 +55,7 @@ public class Account {
 
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.EAGER, targetClass = RoleLed.class)
-	@CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
+	@CollectionTable(name = "role_led", joinColumns = @JoinColumn(name = "user_id"))
 	@Column(name = "role", length = 10, nullable = false)
 	private Set<RoleLed> roles;
 	
