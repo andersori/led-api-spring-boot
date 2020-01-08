@@ -2,10 +2,13 @@
 Rest API for **LED** system.
 ## Run application in different profiles
 ### dev
-> mvn spring-boot:run -DskipTests
+> mvn spring-boot:run -DskipTests\
+> or\
+> mvn package\
+> java -jar -Dspring.profiles.active=dev target/led-api.jar
 
 ### prod
-By default, the prod profile uses a postgresql database. Then you can use [Postgresql + Docker](#postgresql-and-docker).
+By default, the prod profile uses a postgresql database. Then you can use [Postgresql and Docker](#postgresql-and-docker).
 > mvn spring-boot:run -P=prod
 
 ## Postgresql and Docker
