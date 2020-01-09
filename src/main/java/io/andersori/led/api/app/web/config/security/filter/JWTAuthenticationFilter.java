@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,27 +25,32 @@ import io.andersori.led.api.app.web.config.security.util.SecurityUtil;
 import io.andersori.led.api.app.web.config.security.util.UserRequest;
 import io.andersori.led.api.app.web.controller.util.PathConfig;
 import io.andersori.led.api.app.web.response.ApiErrorResponse;
-import io.andersori.led.api.domain.BeanUtil;
 
+@Component
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private ObjectMapper mapper;
 	private JWTToken jwtToken;
-	private AuthenticationManager authenticationManager;
 
-	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+	@Autowired
+	public JWTAuthenticationFilter(ObjectMapper mapper, JWTToken jwtToken) {
 		setFilterProcessesUrl(PathConfig.VERSION + PathConfig.PUBLIC_PATH + "/login");
-		this.authenticationManager = authenticationManager;
-		this.jwtToken = BeanUtil.getBean(JWTToken.class);
-		this.mapper = BeanUtil.getBean(ObjectMapper.class);
+		this.jwtToken = jwtToken;
+		this.mapper = mapper;
 	}
 
+	@Autowired
+	@Override
+	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+		super.setAuthenticationManager(authenticationManager);
+	}
+	
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
 		try {
 			UserRequest user = new ObjectMapper().readValue(request.getInputStream(), UserRequest.class);
-			return authenticationManager
+			return this.getAuthenticationManager()
 					.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 		} catch (IOException e) {
 			throw new AuthenticationServiceException(e.getMessage(), e);

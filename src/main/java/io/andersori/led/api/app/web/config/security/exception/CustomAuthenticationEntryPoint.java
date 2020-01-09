@@ -28,11 +28,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType("application/json");
-
+		
 		ApiErrorResponse error = new ApiErrorResponse();
 		error.setClassType(authException.getClass().getCanonicalName());
 		error.setMessage(authException.getMessage());
 
+		
 		mapper.writeValue(response.getWriter(), error);
 	}
 
