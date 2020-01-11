@@ -29,12 +29,25 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType("application/json");
 		
-		ApiErrorResponse error = new ApiErrorResponse();
-		error.setClassType(authException.getClass().getCanonicalName());
-		error.setMessage(authException.getMessage());
-
+		String classError = authException.getClass().getCanonicalName();
+		String errorMsg = authException.getMessage();
 		
+		if(response.getHeader("CLASS_ERROR") != null) {
+			classError = response.getHeader("CLASS_ERROR");
+			response.setHeader("CLASS_ERROR", null);
+		}
+		
+		if(response.getHeader("ERROR") != null) {
+			errorMsg = response.getHeader("ERROR");
+			response.setHeader("ERROR", null);
+		}
+		
+		ApiErrorResponse error = new ApiErrorResponse();
+		error.setClassType(classError);
+		error.setMessage(errorMsg);
+
 		mapper.writeValue(response.getWriter(), error);
+
 	}
 
 }

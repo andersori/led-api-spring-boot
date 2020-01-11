@@ -2,7 +2,6 @@ package io.andersori.led.api.app.web.config.security.filter;
 
 import java.io.IOException;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,41 +45,44 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		String token = request.getHeader(SecurityUtil.HEADER_STRING);
 
 		if (token != null) {
-				if( token.startsWith(SecurityUtil.TOKEN_PREFIX)) {
-					try {
-						String username = jwtToken.validateToken(token);
-						if (username != null) {
-							Account account = accountService.find(username);
-							UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username,
-									account.getUser().getPassword(), SecurityUtil.getAuthorities(account.getRoles()));
-							auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-							SecurityContextHolder.getContext().setAuthentication(auth);
-						}
-					} catch (JWTVerificationException e) {
-						LOGGER.warn(e.getMessage());
-						throw new AuthenticationException(e.getMessage());
-					} catch (DomainException e) {
-						LOGGER.error(e.getMessage());
-						throw new AuthenticationException(e.getMessage());
+			if (token.startsWith(SecurityUtil.TOKEN_PREFIX)) {
+				try {
+					String username = jwtToken.validateToken(token);
+					if (username != null) {
+						Account account = accountService.find(username);
+						UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username,
+								account.getUser().getPassword(), SecurityUtil.getAuthorities(account.getRoles()));
+						auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+						SecurityContextHolder.getContext().setAuthentication(auth);
 					}
-		
-				} else {
-					LOGGER.warn("JWT_TOKEN_DOES_NOT_START_WITH_BEARER_STRING");
-					throw new AuthenticationException("JWT Token does not start with Bearer string.");
+				} catch (JWTVerificationException e) {
+					LOGGER.warn(e.getMessage());
+					response.addHeader("ERROR", e.getMessage());
+					response.addHeader("CLASS_ERROR", e.getCause() != null ? e.getCause().getClass().getCanonicalName() : e.getClass().getCanonicalName());
+				} catch (DomainException e) {
+					LOGGER.error(e.getMessage());
+					response.addHeader("ERROR", e.getMessage());
+					response.addHeader("CLASS_ERROR", DomainException.class.getCanonicalName());
 				}
+
 			} else {
 				LOGGER.warn("JWT_TOKEN_DOES_NOT_START_WITH_BEARER_STRING");
-				throw new AuthenticationException("JWT Token not provided.");
+				response.addHeader("ERROR", "JWT Token does not start with Bearer string.");
 			}
+		} else {
+			LOGGER.warn("JWT_TOKEN_DOES_NOT_START_WITH_BEARER_STRING");
+			response.addHeader("ERROR", "JWT Token not provided.");
+		}
 
 		chain.doFilter(request, response);
 	}
-	
+
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		if(request.getRequestURI().startsWith(PathConfig.VERSION + PathConfig.PUBLIC_PATH)) {
+		if (request.getRequestURI().startsWith(PathConfig.VERSION + PathConfig.PUBLIC_PATH)) {
 			return true;
 		}
 		return false;
 	}
+	
 }

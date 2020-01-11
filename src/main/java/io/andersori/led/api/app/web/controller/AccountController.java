@@ -26,7 +26,7 @@ public class AccountController {
 		this.accountService = accountService;
 	}
 	
-	@GetMapping(PathConfig.ADMIN_PATH + PATH + "/{id}")
+	@GetMapping(PathConfig.PROTECTED_PATH + PATH + "/{id}")
 	public AccountDTO getAccount(@PathVariable Long id) throws DomainException {
 		AccountDTO account = new AccountDTO().toDTO(accountService.find(id)); 
 		return account;
