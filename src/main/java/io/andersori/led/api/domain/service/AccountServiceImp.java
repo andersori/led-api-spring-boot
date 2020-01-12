@@ -44,9 +44,7 @@ public class AccountServiceImp implements AccountService {
 					}
 				}
 
-				Account acEntity = data.toEntity(accountSaved.get().getUser());
-				acEntity.getUser().setPassword(accountSaved.get().getUser().getPassword());
-				return accountRepository.save(acEntity);
+				return accountRepository.save(data.toEntity());
 			} else {
 				throw new NotFoundException(AccountService.class,
 						"Account with username " + data.getUsername() + " not found.");
@@ -127,14 +125,12 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public Account register(AccountDTO account, String password) throws DomainException {
+	public Account register(AccountDTO account) throws DomainException {
 		Optional<UserLed> user = userLedRepository.findByUsername(account.getUsername());
 		if (user.isEmpty()) {
 			try {
-				UserLed userEntity = new UserLed();
-				userEntity.setUsername(account.getUsername());
-				userEntity.setPassword(passwordEncoder.encode(password));
-				Account acEntity = account.toEntity(userEntity);
+				Account acEntity = account.toEntity();
+				acEntity.getUser().setPassword(passwordEncoder.encode(acEntity.getUser().getPassword()));
 				return accountRepository.save(acEntity);
 			} catch (Exception e) {
 				throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);

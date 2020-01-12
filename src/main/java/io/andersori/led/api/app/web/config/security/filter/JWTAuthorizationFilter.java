@@ -58,7 +58,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 				} catch (JWTVerificationException e) {
 					LOGGER.warn(e.getMessage());
 					response.addHeader("ERROR", e.getMessage());
-					response.addHeader("CLASS_ERROR", e.getCause() != null ? e.getCause().getClass().getCanonicalName() : e.getClass().getCanonicalName());
+					response.addHeader("CLASS_ERROR", e.getCause() != null ? e.getCause().getClass().getCanonicalName()
+							: e.getClass().getCanonicalName());
 				} catch (DomainException e) {
 					LOGGER.error(e.getMessage());
 					response.addHeader("ERROR", e.getMessage());
@@ -84,5 +85,5 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		}
 		return false;
 	}
-	
+
 }

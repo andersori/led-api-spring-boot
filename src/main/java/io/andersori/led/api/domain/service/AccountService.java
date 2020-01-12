@@ -16,7 +16,7 @@ public interface AccountService extends Service<Account, AccountDTO> {
 	 */
 	Account save(AccountDTO data) throws DomainException;
 
-	Account register(AccountDTO account, String password) throws DomainException;
+	Account register(AccountDTO account) throws DomainException;
 
 	Account changePasswordByUsername(String username, String password) throws DomainException;
 

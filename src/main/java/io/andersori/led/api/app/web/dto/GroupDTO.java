@@ -4,11 +4,14 @@ import java.util.Arrays;
 
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 @Data
 public class GroupDTO implements DTO<GroupLed, GroupDTO> {
 
+	@Setter(AccessLevel.PRIVATE)
 	private Long id;
 	private Long eventId;
 	private String name;

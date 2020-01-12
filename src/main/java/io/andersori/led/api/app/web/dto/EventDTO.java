@@ -7,11 +7,14 @@ import java.util.stream.Collectors;
 
 import io.andersori.led.api.domain.entity.Account;
 import io.andersori.led.api.domain.entity.Event;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 @Data
 public class EventDTO implements DTO<Event, EventDTO> {
 
+	@Setter(AccessLevel.PRIVATE)
 	private Long id;
 	private String ownerUsername;
 	private String name;
