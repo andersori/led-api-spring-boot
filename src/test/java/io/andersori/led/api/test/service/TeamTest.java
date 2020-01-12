@@ -67,11 +67,12 @@ public class TeamTest {
 	void init() throws DomainException {
 		AccountDTO account = new AccountDTO();
 		account.setUsername("test");
+		account.setPassword("1234");
 		account.setEmail("email@email.com");
 		account.setFirstName("Test");
 		account.setLastName("Temp");
 
-		owner.toDTO(accountService.register(account, "1234"));
+		owner.toDTO(accountService.register(account));
 
 		EventDTO event = new EventDTO();
 		event.setDate(LocalDate.of(2020, 3, 2));

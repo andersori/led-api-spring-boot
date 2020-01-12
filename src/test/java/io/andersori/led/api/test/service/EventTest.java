@@ -46,18 +46,20 @@ public class EventTest {
 	void init() throws DomainException {
 		AccountDTO account1 = new AccountDTO();
 		account1.setUsername("test");
+		account1.setPassword("1234");
 		account1.setEmail("email@email.com");
 		account1.setFirstName("Test");
 		account1.setLastName("Temp");
 
 		AccountDTO account2 = new AccountDTO();
 		account2.setUsername("test2");
+		account2.setPassword("1234");
 		account2.setEmail("email2@email.com");
 		account2.setFirstName("Test");
 		account2.setLastName("Temp");
 
-		accountService.register(account1, "1234");
-		accountService.register(account2, "1234");
+		accountService.register(account1);
+		accountService.register(account2);
 	}
 
 	@AfterAll
