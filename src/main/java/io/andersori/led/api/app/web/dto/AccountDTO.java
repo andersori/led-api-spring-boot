@@ -21,10 +21,12 @@ import lombok.Setter;
 
 @Data
 public class AccountDTO implements DTO<Account, AccountDTO> {
-	
-	@Setter(AccessLevel.PRIVATE) private Long id;
+
+	@Setter(AccessLevel.PRIVATE)
+	private Long id;
 	private String username;
-	@Getter(AccessLevel.PRIVATE) private String password;
+	@Getter(AccessLevel.PRIVATE)
+	private String password;
 	private String firstName;
 	private String lastName;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")

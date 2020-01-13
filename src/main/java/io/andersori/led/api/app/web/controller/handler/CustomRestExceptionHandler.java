@@ -1,4 +1,4 @@
-package io.andersori.led.api.app.web.controller;
+package io.andersori.led.api.app.web.controller.handler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

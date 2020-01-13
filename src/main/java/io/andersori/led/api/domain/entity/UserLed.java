@@ -25,7 +25,7 @@ public class UserLed {
 	@Column(name = "username", length = 100, nullable = false, unique = true)
 	private String username;
 
-	@Column(name = "password", length = 60)
+	@Column(name = "password", length = 60, nullable = false)
 	private String password;
 
 }
