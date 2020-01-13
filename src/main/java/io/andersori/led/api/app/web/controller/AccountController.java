@@ -18,14 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.andersori.led.api.app.web.controller.util.PathConfig;
 import io.andersori.led.api.app.web.dto.AccountDTO;
 import io.andersori.led.api.domain.entity.RoleLed;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.AccountService;
 
+import static io.andersori.led.api.app.web.controller.util.PathConfig.VERSION;
+import static io.andersori.led.api.app.web.controller.util.PathConfig.ADMIN_PATH;
+import static io.andersori.led.api.app.web.controller.util.PathConfig.PROTECTED_PATH;
+import static io.andersori.led.api.app.web.controller.util.PathConfig.PUBLIC_PATH;
+
 @RestController
-@RequestMapping(PathConfig.VERSION)
+@RequestMapping(VERSION)
 public class AccountController implements DomainController<AccountDTO> {
 
 	private static final String PATH = "/accounts";
@@ -40,7 +44,7 @@ public class AccountController implements DomainController<AccountDTO> {
 	}
 
 	@Override
-	@PostMapping(PathConfig.PUBLIC_PATH + PATH)
+	@PostMapping(PUBLIC_PATH + PATH)
 	public AccountDTO save(@RequestBody AccountDTO data) throws DomainException {
 		if (data.getLastLogin() != null)
 			data.setLastLogin(null);
@@ -49,22 +53,31 @@ public class AccountController implements DomainController<AccountDTO> {
 	}
 
 	@Override
-	@GetMapping(PathConfig.PROTECTED_PATH + PATH + "/{id}")
+	@GetMapping(PROTECTED_PATH + PATH + "/{id}")
 	public AccountDTO find(@PathVariable Long id) throws DomainException {
 		return new AccountDTO().toDTO(accountService.find(id));
 	}
 
 	@Override
-	@GetMapping(PathConfig.PROTECTED_PATH + PATH)
+	@GetMapping(PROTECTED_PATH + PATH)
 	public List<AccountDTO> findAll(@RequestParam(required = false) Integer page,
 			@RequestParam(required = false) Integer size) {
-		return accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a)).collect(Collectors.toList());
-
-		// nao terminado
+		if (page == null && size == null) {
+			return accountService.findAll().stream().map(a -> new AccountDTO().toDTO(a)).collect(Collectors.toList());
+		} else if (page != null && size == null) {
+			return accountService.find(page, 5).stream().map(a -> new AccountDTO().toDTO(a))
+					.collect(Collectors.toList());
+		} else if (page == null && size != null) {
+			return accountService.find(0, size).stream().map(a -> new AccountDTO().toDTO(a))
+					.collect(Collectors.toList());
+		} else {
+			return accountService.find(page, size).stream().map(a -> new AccountDTO().toDTO(a))
+					.collect(Collectors.toList());
+		}
 	}
 
 	@Override
-	@PutMapping(PathConfig.PROTECTED_PATH + PATH + "/{id}")
+	@PutMapping(PROTECTED_PATH + PATH + "/{id}")
 	public AccountDTO update(@PathVariable Long id, @RequestBody AccountDTO data) throws DomainException {
 		AccountDTO ac = new AccountDTO().toDTO(accountService.find(id));
 
@@ -83,14 +96,14 @@ public class AccountController implements DomainController<AccountDTO> {
 		return new AccountDTO().toDTO(accountService.save(ac));
 	}
 
-	@PatchMapping(PathConfig.PROTECTED_PATH + PATH + "/{id}/password")
+	@PatchMapping(PROTECTED_PATH + PATH + "/{id}/password")
 	public void updatePassword(@RequestBody String password, @PathVariable Long id) throws DomainException {
 		AccountDTO ac = new AccountDTO().toDTO(accountService.find(id));
 		ac.setPassword(password);
 		accountService.changePasswordByUsername(ac.getUsername(), password);
 	}
 
-	@PatchMapping(PathConfig.PROTECTED_PATH + PATH + "/{id}/roles")
+	@PatchMapping(PROTECTED_PATH + PATH + "/{id}/roles")
 	public AccountDTO updateRoles(@RequestBody Set<RoleLed> roles, @PathVariable Long id) throws DomainException {
 		AccountDTO ac = new AccountDTO().toDTO(accountService.find(id));
 		if (roles.contains(RoleLed.ADMIN) && !authentication.getAuthorities().stream()
@@ -102,7 +115,7 @@ public class AccountController implements DomainController<AccountDTO> {
 	}
 
 	@Override
-	@DeleteMapping(PathConfig.ADMIN_PATH + PATH + "/{id}")
+	@DeleteMapping(ADMIN_PATH + PATH + "/{id}")
 	public void delete(@PathVariable Long id) throws DomainException {
 		accountService.delete(id);
 	}

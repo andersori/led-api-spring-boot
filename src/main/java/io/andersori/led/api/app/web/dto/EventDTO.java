@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import io.andersori.led.api.domain.entity.Account;
 import io.andersori.led.api.domain.entity.Event;
 import lombok.AccessLevel;
@@ -18,8 +24,12 @@ public class EventDTO implements DTO<Event, EventDTO> {
 	private Long id;
 	private String ownerUsername;
 	private String name;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
 	private LocalDate date;
 	private String description;
+	@Setter(AccessLevel.PRIVATE)
 	private List<GroupDTO> groups = new ArrayList<GroupDTO>();
 
 	@Override
