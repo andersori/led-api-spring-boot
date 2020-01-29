@@ -1,12 +1,11 @@
 package io.andersori.led.api.domain.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,7 @@ import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.AccountRepository;
 import io.andersori.led.api.resource.repository.UserLedRepository;
+import io.andersori.led.api.resource.specification.AccountSpec;
 
 @Service
 public class AccountServiceImp implements AccountService {
@@ -27,7 +27,8 @@ public class AccountServiceImp implements AccountService {
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public AccountServiceImp(AccountRepository accountRepository, UserLedRepository userLedRepository, PasswordEncoder passwordEncoder) {
+	public AccountServiceImp(AccountRepository accountRepository, UserLedRepository userLedRepository,
+			PasswordEncoder passwordEncoder) {
 		this.accountRepository = accountRepository;
 		this.userLedRepository = userLedRepository;
 		this.passwordEncoder = passwordEncoder;
@@ -73,23 +74,6 @@ public class AccountServiceImp implements AccountService {
 			return account.get();
 		}
 		throw new NotFoundException(AccountService.class, "Account with id " + id + " not found.");
-	}
-
-	@Override
-	public List<Account> find(int pageNumber, int pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("user_id"));
-		return accountRepository.findAll(page).getContent();
-	}
-
-	@Override
-	public List<Account> find(String firstName, int pageNumber, int pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("user_id"));
-		return accountRepository.findByFirstNameContaining(firstName, page).getContent();
-	}
-
-	@Override
-	public List<Account> findAll() {
-		return accountRepository.findAll();
 	}
 
 	@Override
@@ -146,6 +130,22 @@ public class AccountServiceImp implements AccountService {
 		} catch (Exception e) {
 			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
 		}
+	}
+
+	@Override
+	public List<Account> findAll(Pageable page, AccountDTO filter) {
+		return accountRepository.findAll(new AccountSpec(filter), page).getContent();
+	}
+
+	@Override
+	public Account changeLastLogin(String username, LocalDateTime lastLogin) throws DomainException {
+		Optional<Account> account = accountRepository.findByUserUsername(username);
+		if (account.isPresent()) {
+			Account ac = account.get();
+			ac.setLastLogin(lastLogin);
+			return accountRepository.save(ac);
+		}
+		throw new NotFoundException(AccountService.class, "Account with username " + username + " not found.");
 	}
 
 }

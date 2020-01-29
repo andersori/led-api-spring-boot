@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
@@ -16,6 +14,7 @@ import io.andersori.led.api.domain.entity.GroupLed;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.GroupLedRepository;
+import io.andersori.led.api.resource.specification.GroupSpec;
 
 @Service
 public class GroupLedServiceImp implements GroupLedService {
@@ -60,22 +59,6 @@ public class GroupLedServiceImp implements GroupLedService {
 	}
 
 	@Override
-	public List<GroupLed> find(int pageNumber, int pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("group_led_id"));
-		return groupLedRepository.findAll(page).getContent();
-	}
-
-	@Override
-	public List<GroupLed> findAll() {
-		return groupLedRepository.findAll();
-	}
-
-	@Override
-	public List<GroupLed> find(String name) {
-		return groupLedRepository.findByName(name);
-	}
-
-	@Override
 	public List<GroupLed> find(EventDTO event) throws DomainException {
 		try {
 			eventService.find(event.getId());
@@ -83,6 +66,11 @@ public class GroupLedServiceImp implements GroupLedService {
 			throw e;
 		}
 		return groupLedRepository.findByEventId(event.getId());
+	}
+
+	@Override
+	public List<GroupLed> findAll(Pageable page, GroupDTO filter) {
+		return groupLedRepository.findAll(new GroupSpec(filter), page).getContent();
 	}
 
 }

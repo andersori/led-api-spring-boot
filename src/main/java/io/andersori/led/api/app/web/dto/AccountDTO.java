@@ -29,6 +29,7 @@ public class AccountDTO implements DTO<Account, AccountDTO> {
 	private String password;
 	private String firstName;
 	private String lastName;
+	@Setter(AccessLevel.PRIVATE)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)

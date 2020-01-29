@@ -70,8 +70,7 @@ public abstract class HelperFacade {
 				} else {
 					group = groups.get(RAND.nextInt(groups.size()));
 				}
-				team.setGroupId(group.getId());
-				TEAM_SERVICE.updateGroup(team);
+				TEAM_SERVICE.updateGroup(team, group.getId());
 			} else {
 				throw new NotFoundException(HelperFacade.class,
 						"Team " + team.getName() + " unregistered, register before attempting to define a group.");

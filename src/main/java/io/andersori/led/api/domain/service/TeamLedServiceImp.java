@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
@@ -18,6 +16,7 @@ import io.andersori.led.api.domain.entity.TeamLed;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.resource.repository.TeamLedRepository;
+import io.andersori.led.api.resource.specification.TeamSpec;
 
 @Service
 public class TeamLedServiceImp implements TeamLedService {
@@ -42,6 +41,7 @@ public class TeamLedServiceImp implements TeamLedService {
 			if (data.getGroupId() != null) {
 				group = groupService.find(data.getGroupId());
 			}
+			System.out.println(data.toString());
 			return teamLedRepository.save(data.toEntity(group, event));
 		} catch (Exception e) {
 			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
@@ -68,39 +68,23 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	public List<TeamLed> find(int pageNumber, int pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("team_led_id"));
-		return teamLedRepository.findAll(page).getContent();
+	public void updateGroup(TeamDTO team, Long idGroup) {
+		teamLedRepository.changeGroup(team.getId(), idGroup);
 	}
 
 	@Override
-	public List<TeamLed> findAll() {
-		return teamLedRepository.findAll();
+	public List<TeamLed> findAll(Pageable page, TeamDTO filter) {
+		return teamLedRepository.findAll(new TeamSpec(filter), page).getContent();
 	}
 
 	@Override
 	public List<TeamLed> find(GroupDTO group) throws DomainException {
-		try {
-			groupService.find(group.getId());
-		} catch (DomainException e) {
-			throw e;
-		}
 		return teamLedRepository.findByGroupId(group.getId());
 	}
 
 	@Override
 	public List<TeamLed> find(EventDTO event) throws DomainException {
-		try {
-			eventService.find(event.getId());
-		} catch (DomainException e) {
-			throw e;
-		}
 		return teamLedRepository.findByEventId(event.getId());
-	}
-
-	@Override
-	public void updateGroup(TeamDTO team) {
-		teamLedRepository.changeGroup(team.getId(), team.getGroupId());
 	}
 
 }

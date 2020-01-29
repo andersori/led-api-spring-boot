@@ -14,5 +14,5 @@ public interface TeamLedService extends Service<TeamLed, TeamDTO> {
 	
 	List<TeamLed> find(EventDTO event) throws DomainException;
 	
-	void updateGroup(TeamDTO team);
+	void updateGroup(TeamDTO team, Long idGroup);
 }

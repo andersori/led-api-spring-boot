@@ -2,6 +2,8 @@ package io.andersori.led.api.domain.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import io.andersori.led.api.domain.exception.DomainException;
 
 public interface Service<T, DtoType> {
@@ -12,8 +14,6 @@ public interface Service<T, DtoType> {
 
 	T find(Long id) throws DomainException;
 
-	List<T> find(int pageNumber, int pageSize);
-
-	List<T> findAll();
+	List<T> findAll(Pageable page, DtoType filter);
 
 }

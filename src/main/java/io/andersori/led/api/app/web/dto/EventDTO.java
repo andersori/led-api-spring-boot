@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,15 +17,18 @@ import io.andersori.led.api.domain.entity.Account;
 import io.andersori.led.api.domain.entity.Event;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
+@NoArgsConstructor
 public class EventDTO implements DTO<Event, EventDTO> {
 
 	@Setter(AccessLevel.PRIVATE)
 	private Long id;
 	private String ownerUsername;
 	private String name;
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonSerialize(using = LocalDateSerializer.class)
@@ -31,6 +36,13 @@ public class EventDTO implements DTO<Event, EventDTO> {
 	private String description;
 	@Setter(AccessLevel.PRIVATE)
 	private List<GroupDTO> groups = new ArrayList<GroupDTO>();
+
+	public EventDTO(String ownerUsername, String name, LocalDate date, String description) {
+		this.ownerUsername = ownerUsername;
+		this.name = name;
+		this.date = date;
+		this.description = description;
+	}
 
 	@Override
 	public EventDTO toDTO(Event entity) {

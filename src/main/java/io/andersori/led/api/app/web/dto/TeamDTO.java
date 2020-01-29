@@ -1,6 +1,5 @@
 package io.andersori.led.api.app.web.dto;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,16 +16,18 @@ public class TeamDTO implements DTO<TeamLed, TeamDTO> {
 
 	@Setter(AccessLevel.PRIVATE)
 	private Long id;
-	private String name;
+	@Setter(AccessLevel.PRIVATE)
 	private boolean verified = false;
-	private List<String> participants = new ArrayList<String>();
+	@Setter(AccessLevel.PRIVATE)
 	private Integer score = 0;
-	
 	@Setter(AccessLevel.PRIVATE)
 	private String secret = HelperFacade.secretGenerator();
-	
+	@Setter(AccessLevel.PRIVATE)
 	private Long groupId;
+
+	private String name;
 	private Long eventId;
+	private List<String> participants;
 
 	@Override
 	public TeamDTO toDTO(TeamLed entity) {
@@ -38,7 +39,8 @@ public class TeamDTO implements DTO<TeamLed, TeamDTO> {
 		groupId = entity.getGroup() != null ? entity.getGroup().getId() : null;
 		eventId = entity.getEvent().getId();
 
-		participants = Arrays.asList(entity.getParticipants().split(";"));
+		participants = entity.getParticipants() != null ? Arrays.asList(entity.getParticipants().split(";"))
+				: Arrays.asList();
 		return this;
 	}
 
@@ -53,14 +55,17 @@ public class TeamDTO implements DTO<TeamLed, TeamDTO> {
 		entity.setGroup(group);
 		entity.setEvent(event);
 
-		StringBuilder participants = new StringBuilder();
-		for(int i = 0; i < this.participants.size(); i++) {
-			participants.append(this.participants.get(i));
-			if(i != this.participants.size()-1) {
-				participants.append(";");
+		if (participants != null) {
+			StringBuilder participants = new StringBuilder();
+			for (int i = 0; i < this.participants.size(); i++) {
+				participants.append(this.participants.get(i));
+				if (i != this.participants.size() - 1) {
+					participants.append(";");
+				}
 			}
+			entity.setParticipants(participants.toString());
 		}
-		entity.setParticipants(participants.toString());
+
 		return entity;
 
 	}
