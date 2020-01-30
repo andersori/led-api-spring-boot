@@ -1,0 +1,10 @@
+.git/
+.gitignore
+
+Dockerfile
+
+.classpath
+.project
+.settings/
+
+target/
