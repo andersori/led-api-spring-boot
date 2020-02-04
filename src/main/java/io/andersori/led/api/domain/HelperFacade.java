@@ -38,10 +38,10 @@ public abstract class HelperFacade {
 	public static synchronized void groupSelector(TeamDTO team, EventDTO event) throws DomainException {
 		try {
 			if (team.getId() != null) {
-				if(!team.isVerified()) {
+				if (!team.isVerified()) {
 					throw new DomainException(HelperFacade.class, "Team " + team.getName() + " unverified.");
 				}
-				
+
 				List<GroupDTO> groups = GROUP_SERVICE.find(event).stream().map(g -> new GroupDTO().toDTO(g))
 						.collect(Collectors.toList());
 
@@ -70,7 +70,7 @@ public abstract class HelperFacade {
 				} else {
 					group = groups.get(RAND.nextInt(groups.size()));
 				}
-				TEAM_SERVICE.updateGroup(team, group.getId());
+				TEAM_SERVICE.updateGroup(team.getId(), group.getId(), team.getSecret());
 			} else {
 				throw new NotFoundException(HelperFacade.class,
 						"Team " + team.getName() + " unregistered, register before attempting to define a group.");

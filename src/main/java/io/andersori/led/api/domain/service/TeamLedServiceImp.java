@@ -68,11 +68,6 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	public void updateGroup(TeamDTO team, Long idGroup) {
-		teamLedRepository.changeGroup(team.getId(), idGroup);
-	}
-
-	@Override
 	public List<TeamLed> findAll(Pageable page, TeamDTO filter) {
 		return teamLedRepository.findAll(new TeamSpec(filter), page).getContent();
 	}
@@ -85,6 +80,32 @@ public class TeamLedServiceImp implements TeamLedService {
 	@Override
 	public List<TeamLed> find(EventDTO event) throws DomainException {
 		return teamLedRepository.findByEventId(event.getId());
+	}
+
+	@Override
+	public TeamLed updateGroup(Long id, Long idGroup, String secret) throws DomainException {
+		Optional<TeamLed> team = teamLedRepository.findById(id);
+		if (team.isPresent()) {
+			if (team.get().getSecret().equals(secret)) {
+				teamLedRepository.changeGroup(id, idGroup);
+				return teamLedRepository.findById(id).get();
+			}
+			throw new DomainException(TeamLedService.class, "The secret doesn't check.");
+		}
+		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
+	}
+
+	@Override
+	public TeamLed updateVerified(Long id, Boolean verified, String secret) throws DomainException {
+		Optional<TeamLed> team = teamLedRepository.findById(id);
+		if (team.isPresent()) {
+			if (team.get().getSecret().equals(secret)) {
+				teamLedRepository.changeVerified(id, verified);
+				return teamLedRepository.findById(id).get();
+			}
+			throw new DomainException(TeamLedService.class, "The secret doesn't check.");
+		}
+		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
 	}
 
 }

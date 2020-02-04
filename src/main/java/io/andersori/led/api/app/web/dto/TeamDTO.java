@@ -63,7 +63,7 @@ public class TeamDTO implements DTO<TeamLed, TeamDTO> {
 					participants.append(";");
 				}
 			}
-			entity.setParticipants(participants.toString());
+			entity.setParticipants(participants.length() == 0 ? null : participants.toString());
 		}
 
 		return entity;

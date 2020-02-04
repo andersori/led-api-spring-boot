@@ -3,6 +3,8 @@ package io.andersori.led.api.app.web.controller.handler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -36,5 +38,25 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.valueOf(ex.getHttpStatusCode()),
 				request);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		ApiErrorResponse response = new ApiErrorResponse();
+		response.setClassType(ex.getClass().getCanonicalName());
+		response.setMessage(ex.getMessage());
+
+		return new ResponseEntity<Object>(response, headers, status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		ApiErrorResponse response = new ApiErrorResponse();
+		response.setClassType(ex.getClass().getCanonicalName());
+		response.setMessage(ex.getMessage());
+
+		return new ResponseEntity<Object>(response, headers, status);
 	}
 }

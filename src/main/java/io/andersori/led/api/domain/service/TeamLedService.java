@@ -9,10 +9,12 @@ import io.andersori.led.api.domain.entity.TeamLed;
 import io.andersori.led.api.domain.exception.DomainException;
 
 public interface TeamLedService extends Service<TeamLed, TeamDTO> {
-	
+
 	List<TeamLed> find(GroupDTO group) throws DomainException;
-	
+
 	List<TeamLed> find(EventDTO event) throws DomainException;
-	
-	void updateGroup(TeamDTO team, Long idGroup);
+
+	TeamLed updateGroup(Long id, Long idGroup, String secret) throws DomainException;
+
+	TeamLed updateVerified(Long id, Boolean verified, String secret) throws DomainException;
 }

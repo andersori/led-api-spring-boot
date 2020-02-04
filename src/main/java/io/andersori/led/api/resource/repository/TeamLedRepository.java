@@ -22,4 +22,9 @@ public interface TeamLedRepository extends JpaRepository<TeamLed, Long>, JpaSpec
 	@Query("UPDATE TeamLed t SET t.group.id = :idGroup WHERE t.id = :idTeam")
 	Integer changeGroup(Long idTeam, Long idGroup);
 
+	@Modifying
+	@Transactional
+	@Query("UPDATE TeamLed t SET t.verified = :verified WHERE t.id = :idTeam")
+	Integer changeVerified(Long idTeam, Boolean verified);
+
 }
