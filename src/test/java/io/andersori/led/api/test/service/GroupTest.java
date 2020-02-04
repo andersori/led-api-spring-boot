@@ -33,7 +33,7 @@ import io.andersori.led.api.domain.service.GroupLedService;
 @TestInstance(Lifecycle.PER_CLASS)
 @TestMethodOrder(OrderAnnotation.class)
 public class GroupTest {
-
+/*
 	private final Logger logger = LoggerFactory.getLogger(GroupTest.class);
 
 	private final AccountService accountService;
@@ -150,4 +150,5 @@ public class GroupTest {
 			groupService.delete(10L);
 		}).getMessage());
 	}
+	*/
 }

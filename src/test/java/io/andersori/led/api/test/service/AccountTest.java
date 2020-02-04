@@ -28,7 +28,7 @@ import io.andersori.led.api.domain.service.AccountService;
 @TestInstance(Lifecycle.PER_CLASS)
 @TestMethodOrder(OrderAnnotation.class)
 class AccountTest {
-
+/*
 	private final Logger logger = LoggerFactory.getLogger(AccountTest.class);
 
 	private AccountService accountService;
@@ -147,4 +147,5 @@ class AccountTest {
 		logger.info(acs.toString());
 		assertTrue(acs.size() == 2);
 	}
+	*/
 }

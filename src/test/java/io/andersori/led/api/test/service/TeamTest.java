@@ -43,7 +43,7 @@ import io.andersori.led.api.test.util.ThreadUtil;
 @TestInstance(Lifecycle.PER_CLASS)
 @TestMethodOrder(OrderAnnotation.class)
 public class TeamTest {
-
+/*
 	private final Logger logger = LoggerFactory.getLogger(GroupTest.class);
 
 	private final AccountService accountService;
@@ -342,4 +342,5 @@ public class TeamTest {
 			HelperFacade.groupSelector(team13, mainEvent);
 		}).toString());
 	}
+	*/
 }
