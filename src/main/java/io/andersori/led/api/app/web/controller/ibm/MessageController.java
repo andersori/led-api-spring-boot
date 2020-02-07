@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.andersori.led.api.domain.service.IBMService;
+
 import static io.andersori.led.api.app.web.controller.util.PathConfig.VERSION;
 
 import java.util.UUID;
@@ -21,17 +23,23 @@ import static io.andersori.led.api.app.web.controller.util.PathConfig.PUBLIC_PAT
 @RequestMapping(VERSION)
 public class MessageController {
 
+	private final IBMService ibmService;
+
+	public MessageController(IBMService ibmService) {
+		this.ibmService = ibmService;
+	}
+
 	@PostMapping(value = PUBLIC_PATH
 			+ "/message", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
 	public String getMesage(@RequestBody String message, HttpServletResponse res, HttpServletRequest req,
 			@CookieValue(name = "APP_UUID", required = false) String appUuid) {
 		if (appUuid == null) {
-			Cookie cookie = new Cookie("APP_UUID", UUID.randomUUID().toString());
+			appUuid = UUID.randomUUID().toString();
+			Cookie cookie = new Cookie("APP_UUID", appUuid);
 			cookie.setDomain(req.getContextPath());
 			cookie.setHttpOnly(true);
 			res.addCookie(cookie);
 		}
-		System.out.println(appUuid);
-		return message;
+		return ibmService.getMessage(appUuid, message).getOutput().getGeneric().toString();
 	}
 }
