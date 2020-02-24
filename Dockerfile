@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim
+FROM openjdk:11-jre-slim
 RUN mkdir home/application
 WORKDIR home/application
 COPY . .

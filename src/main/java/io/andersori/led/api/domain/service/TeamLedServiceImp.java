@@ -41,10 +41,9 @@ public class TeamLedServiceImp implements TeamLedService {
 			if (data.getGroupId() != null) {
 				group = groupService.find(data.getGroupId());
 			}
-			System.out.println(data.toString());
 			return teamLedRepository.save(data.toEntity(group, event));
 		} catch (Exception e) {
-			throw new DomainException(AccountService.class, e.getCause() != null ? e.getCause() : e);
+			throw new DomainException(TeamLedService.class, e.getCause() != null ? e.getCause() : e);
 		}
 	}
 

@@ -15,5 +15,5 @@ services:
         container_name: redis
         image: redis:latest
         command: redis-server --requirepass ${REDIS_PASS}
-        port:
+        ports:
             - 6379:6379

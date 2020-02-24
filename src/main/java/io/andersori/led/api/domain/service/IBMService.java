@@ -10,6 +10,8 @@ import com.ibm.watson.assistant.v2.model.MessageInput;
 import com.ibm.watson.assistant.v2.model.MessageOptions;
 import com.ibm.watson.assistant.v2.model.MessageResponse;
 
+import io.andersori.led.api.app.web.dto.UserMessageDTO;
+import io.andersori.led.api.domain.exception.DomainException;
 import redis.clients.jedis.Jedis;
 
 @Service
@@ -20,14 +22,20 @@ public class IBMService {
 
 	private final Jedis redis;
 	private final Assistant assistant;
+	private final MessageService messageService;
 
-	public IBMService(Jedis redis, Assistant assistant) {
+	public IBMService(Jedis redis, Assistant assistant, MessageService messageService) {
+		super();
 		this.redis = redis;
 		this.assistant = assistant;
+		this.messageService = messageService;
 	}
 
-	public MessageResponse getMessage(String appUuid, String messageInput) {
+	public MessageResponse getMessage(String appUuid, String messageInput) throws DomainException {
 		try {
+			
+			messageService.save(new UserMessageDTO(messageInput, appUuid));
+			
 			return assistant
 					.message(new MessageOptions.Builder(assistantId, getSessionId(appUuid))
 							.input(new MessageInput.Builder().messageType("text").text(messageInput).build()).build())
@@ -44,11 +52,14 @@ public class IBMService {
 
 	private String getSessionId(String appUuid) {
 		String sessionId = redis.get(appUuid);
-		if (sessionId != null)
+		if (sessionId != null) {
+			redis.expire(appUuid, 302);
 			return sessionId;
+		}
 		sessionId = assistant.createSession(new CreateSessionOptions.Builder(assistantId).build()).execute().getResult()
 				.getSessionId();
 		redis.append(appUuid, sessionId);
+		redis.expire(appUuid, 302);
 		return sessionId;
 	}
 }

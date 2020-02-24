@@ -71,10 +71,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 			.exceptionHandling().accessDeniedHandler(accessHandler).authenticationEntryPoint(entryHandle);
 		
-		http
-        .headers()
-        .frameOptions().sameOrigin()
-        .cacheControl();
+//		http
+//        .headers()
+//        .frameOptions().sameOrigin()
+//        .cacheControl();
+		
+		http.cors().disable();
 	}
 	
 	@Override
