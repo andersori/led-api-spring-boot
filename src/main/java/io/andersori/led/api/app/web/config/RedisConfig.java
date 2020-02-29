@@ -11,15 +11,19 @@ public class RedisConfig {
 
 	@Value("${redis.host}")
 	private String host;
-	@Value("${redis.port}")
+	@Value("${redis.port:Undefined}")
 	private String port;
-	@Value("${redis.password}")
+	@Value("${redis.password:Undefined}")
 	private String password;
 
 	@Bean
 	public Jedis config() {
-		Jedis jedis = new Jedis(host, Integer.parseInt(port));
-		jedis.auth(password);
-		return jedis;
+		if (port.equals("Undefined") && password.equals("Undefined"))
+			return new Jedis(host);
+		else {
+			Jedis jedis = new Jedis(host, Integer.parseInt(port));
+			jedis.auth(password);
+			return jedis;
+		}
 	}
 }

@@ -1,1 +1,1 @@
-web: ./mvnw -DskipTests package -P=prod && java $JAVA_OPTS -Dserver.port=$PORT $JAVA_OPTS -jar target/led-api.jar
+web: ./mvnw -DskipTests compile package -P=prod && java $JAVA_OPTS -Dserver.port=$PORT -Dspring.datasource.url=$JDBC_DATABASE_URL -Dspring.datasource.username=$JDBC_DATABASE_USERNAME -Dspring.datasource.password=$JDBC_DATABASE_PASSWORD $JAVA_OPTS -jar target/led-api.jar
