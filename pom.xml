@@ -106,9 +106,6 @@
 	<profiles>
 		<profile>
 			<id>dev</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<properties>
 				<spring-boot.run.profiles>dev</spring-boot.run.profiles>
 			</properties>
@@ -126,6 +123,9 @@
 		</profile>
 		<profile>
 			<id>prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<properties>
 				<spring-boot.run.profiles>prod</spring-boot.run.profiles>
 				<maven.test.skip>true</maven.test.skip>
