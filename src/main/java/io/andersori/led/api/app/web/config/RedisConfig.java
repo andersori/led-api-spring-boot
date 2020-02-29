@@ -11,9 +11,9 @@ public class RedisConfig {
 
 	@Value("${redis.host}")
 	private String host;
-	@Value("${redis.port:Undefined}")
+	@Value("${redis.port}")
 	private String port;
-	@Value("${redis.password:Undefined}")
+	@Value("${redis.password}")
 	private String password;
 
 	@Bean
