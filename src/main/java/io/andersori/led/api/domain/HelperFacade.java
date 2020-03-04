@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
 import io.andersori.led.api.app.web.dto.GroupDTO;
+import io.andersori.led.api.app.web.dto.ParticipantDTO;
 import io.andersori.led.api.app.web.dto.TeamDTO;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.exception.NotFoundException;
 import io.andersori.led.api.domain.service.GroupLedService;
+import io.andersori.led.api.domain.service.ParticipantService;
 import io.andersori.led.api.domain.service.TeamLedService;
 
 public abstract class HelperFacade {
@@ -19,10 +21,12 @@ public abstract class HelperFacade {
 
 	private static final GroupLedService GROUP_SERVICE;
 	private static final TeamLedService TEAM_SERVICE;
+	private static final ParticipantService PARTICIPANT_SERVICE;
 
 	static {
 		GROUP_SERVICE = BeanUtil.getBean(GroupLedService.class);
 		TEAM_SERVICE = BeanUtil.getBean(TeamLedService.class);
+		PARTICIPANT_SERVICE = BeanUtil.getBean(ParticipantService.class);
 	}
 
 	public static String secretGenerator() {
@@ -33,6 +37,30 @@ public abstract class HelperFacade {
 			secret.append(LEXICON.charAt(RAND.nextInt(LEXICON.length())));
 		}
 		return secret.toString();
+	}
+
+	public static synchronized void teamSelector(ParticipantDTO participant, EventDTO event) throws DomainException {
+		try {
+			if (participant.getId() != null) {
+				List<TeamDTO> teams = TEAM_SERVICE.find(event)
+						.stream()
+						.map(team -> new TeamDTO().toDTO(team))
+						.collect(Collectors.toList());
+				
+				List<ParticipantDTO> participants = PARTICIPANT_SERVICE.find(event)
+						.stream()
+						.map(team -> new ParticipantDTO().toDTO(team))
+						.collect(Collectors.toList());
+								
+			} else {
+				throw new NotFoundException(HelperFacade.class, "Participant " + participant.getName()
+						+ " unregistered, register before attempting to define a team.");
+			}
+		} catch (DomainException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DomainException(HelperFacade.class, e.getCause() != null ? e.getCause() : e);
+		}
 	}
 
 	public static synchronized void groupSelector(TeamDTO team, EventDTO event) throws DomainException {

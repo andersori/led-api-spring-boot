@@ -67,8 +67,6 @@ public class TeamController implements DomainController<TeamDTO> {
 			throw new DomainException(TeamController.class, "It is not possible to change the event id.");
 		if (data.getName() != null)
 			tm.setName(data.getName());
-		if (data.getParticipants() != null)
-			tm.setParticipants(data.getParticipants());
 
 		return new TeamDTO().toDTO(teamService.save(tm));
 	}
