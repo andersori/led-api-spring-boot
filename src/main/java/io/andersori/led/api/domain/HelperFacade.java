@@ -42,16 +42,42 @@ public abstract class HelperFacade {
 	public static synchronized void teamSelector(ParticipantDTO participant, EventDTO event) throws DomainException {
 		try {
 			if (participant.getId() != null) {
-				List<TeamDTO> teams = TEAM_SERVICE.find(event)
-						.stream()
-						.map(team -> new TeamDTO().toDTO(team))
+				List<TeamDTO> teams = TEAM_SERVICE.find(event).stream().map(team -> new TeamDTO().toDTO(team))
 						.collect(Collectors.toList());
+
+				for (TeamDTO t : teams) {
+					if (t.getGroupId() != null) {
+						throw new DomainException(HelperFacade.class,
+								"Team" + t.getName() + " is not yet part of a group.");
+					}
+				}
+
+				List<ParticipantDTO> participants = PARTICIPANT_SERVICE.find(event).stream()
+						.map(parti -> new ParticipantDTO().toDTO(parti)).collect(Collectors.toList());
 				
-				List<ParticipantDTO> participants = PARTICIPANT_SERVICE.find(event)
-						.stream()
-						.map(team -> new ParticipantDTO().toDTO(team))
-						.collect(Collectors.toList());
-								
+				int maxPerTeam = (int) Math.floor(participants.size() / teams.size());
+				
+				maxPerTeam = maxPerTeam == 0 ? maxPerTeam + 1 : maxPerTeam;
+				
+				List<TeamDTO> allowedTeams = new ArrayList<TeamDTO>();
+				for (TeamDTO t : teams) {
+					List<ParticipantDTO> partis = participants.stream()
+							.filter(p -> p.getIdTeam() != null && p.getIdTeam() == t.getId())
+							.collect(Collectors.toList());
+
+					if (partis.size() < maxPerTeam) {
+						allowedTeams.add(t);
+					}
+
+				}
+
+				TeamDTO team = null;
+				if (allowedTeams.size() > 0) {
+					team = allowedTeams.get(RAND.nextInt(allowedTeams.size()));
+				} else {
+					team = teams.get(RAND.nextInt(teams.size()));
+				}
+				PARTICIPANT_SERVICE.updateTeam(participant, team);
 			} else {
 				throw new NotFoundException(HelperFacade.class, "Participant " + participant.getName()
 						+ " unregistered, register before attempting to define a team.");

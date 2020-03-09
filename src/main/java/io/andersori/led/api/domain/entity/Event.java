@@ -1,7 +1,7 @@
 package io.andersori.led.api.domain.entity;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,9 +42,7 @@ public class Event {
 	@Column(name = "description", length = 300)
 	private String description;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "event_id")
-	private List<GroupLed> groups;
+	@OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
+	private Set<GroupLed> groups;
 
 }

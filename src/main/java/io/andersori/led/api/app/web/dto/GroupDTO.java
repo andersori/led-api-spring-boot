@@ -1,6 +1,6 @@
 package io.andersori.led.api.app.web.dto;
 
-import java.util.Arrays;
+import java.util.HashSet;
 
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
@@ -29,7 +29,7 @@ public class GroupDTO implements DTO<GroupLed, GroupDTO> {
 		entity.setId(id);
 		entity.setEvent(event);
 		entity.setName(name);
-		entity.setTeams(Arrays.asList());
+		entity.setTeams(new HashSet<>());
 		return entity;
 	}
 

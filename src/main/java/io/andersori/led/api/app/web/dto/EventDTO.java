@@ -52,6 +52,8 @@ public class EventDTO implements DTO<Event, EventDTO> {
 		date = entity.getDate();
 		description = entity.getDescription();
 
+		System.out.println(entity.getGroups().size());
+		
 		groups = entity.getGroups().stream().map(gp -> {
 			return new GroupDTO().toDTO(gp);
 		}).collect(Collectors.toList());
@@ -68,7 +70,7 @@ public class EventDTO implements DTO<Event, EventDTO> {
 		entity.setDescription(description);
 		entity.setGroups(groups.stream().map(gp -> {
 			return gp.toEntity(entity);
-		}).collect(Collectors.toList()));
+		}).collect(Collectors.toSet()));
 		return entity;
 
 	}

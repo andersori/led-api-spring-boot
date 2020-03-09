@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
 import io.andersori.led.api.app.web.dto.ParticipantDTO;
+import io.andersori.led.api.app.web.dto.TeamDTO;
 import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.exception.NotFoundException;
@@ -44,7 +45,7 @@ public class ParticipantServiceImp implements ParticipantService {
 		if (participant.isPresent()) {
 			return participant.get();
 		}
-		throw new NotFoundException(EventService.class, "Event with id " + id + " not found.");
+		throw new NotFoundException(EventService.class, "Participant with id " + id + " not found.");
 	}
 
 	@Override
@@ -55,6 +56,17 @@ public class ParticipantServiceImp implements ParticipantService {
 	@Override
 	public List<Participant> find(EventDTO event) {
 		return repo.findByEventId(event.getId());
+	}
+
+	@Override
+	public void updateTeam(ParticipantDTO parti, TeamDTO team) throws DomainException {
+		Optional<Participant> participant = repo.findById(parti.getId());
+		if (participant.isPresent()) {
+			participant.get().setTeam(teamService.find(team.getId()));
+			repo.save(participant.get());
+		} else {
+			throw new NotFoundException(EventService.class, "Participant with id " + parti.getId() + " not found.");
+		}
 	}
 
 }
