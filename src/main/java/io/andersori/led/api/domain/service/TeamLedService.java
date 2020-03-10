@@ -17,4 +17,8 @@ public interface TeamLedService extends Service<TeamLed, TeamDTO> {
 	TeamLed updateGroup(Long id, Long idGroup, String secret) throws DomainException;
 
 	TeamLed updateVerified(Long id, Boolean verified, String secret) throws DomainException;
+
+	TeamLed random(Long id, String secret) throws DomainException;
+
+	List<TeamLed> shuffle(Long idEvent) throws DomainException;
 }

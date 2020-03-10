@@ -95,4 +95,16 @@ public class TeamController implements DomainController<TeamDTO> {
 		teamService.delete(id);
 	}
 
+	@PostMapping(ADMIN_PATH + PATH + "/{id}/random")
+	public TeamDTO randomGroup(@PathVariable Long id, @RequestParam(required = true) String secret)
+			throws DomainException {
+		return new TeamDTO().toDTO(teamService.random(id, secret));
+	}
+
+	@PostMapping(ADMIN_PATH + PATH + "/{idEvent}/shuffle")
+	public List<TeamDTO> shuffleAll(@PathVariable Long idEvent) throws DomainException {
+		return teamService.shuffle(idEvent).stream().map(team -> new TeamDTO().toDTO(team))
+				.collect(Collectors.toList());
+	}
+
 }

@@ -92,10 +92,6 @@ public abstract class HelperFacade {
 	public static synchronized void groupSelector(TeamDTO team, EventDTO event) throws DomainException {
 		try {
 			if (team.getId() != null) {
-				if (!team.isVerified()) {
-					throw new DomainException(HelperFacade.class, "Team " + team.getName() + " unverified.");
-				}
-
 				List<GroupDTO> groups = GROUP_SERVICE.find(event).stream().map(g -> new GroupDTO().toDTO(g))
 						.collect(Collectors.toList());
 

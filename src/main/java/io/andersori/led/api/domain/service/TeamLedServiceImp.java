@@ -1,15 +1,20 @@
 package io.andersori.led.api.domain.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.github.javafaker.Faker;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
 import io.andersori.led.api.app.web.dto.GroupDTO;
 import io.andersori.led.api.app.web.dto.TeamDTO;
+import io.andersori.led.api.domain.HelperFacade;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.GroupLed;
 import io.andersori.led.api.domain.entity.TeamLed;
@@ -41,8 +46,22 @@ public class TeamLedServiceImp implements TeamLedService {
 			if (data.getGroupId() != null) {
 				group = groupService.find(data.getGroupId());
 			}
+			
+			if(data.getName() == null)
+				data.setName(Faker.instance().witcher().monster());
+			
+			for(int i = 0; !teamLedRepository.findAll(new TeamSpec(data), PageRequest.of(0, 1)).isEmpty(); i++) {
+				if(i < 100) {
+					data.setName(Faker.instance().witcher().monster());
+				} else {
+					data.setName(Faker.instance().witcher().monster());
+					break;
+				}
+			}
+			
 			return teamLedRepository.save(data.toEntity(group, event));
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DomainException(TeamLedService.class, e.getCause() != null ? e.getCause() : e);
 		}
 	}
@@ -105,6 +124,28 @@ public class TeamLedServiceImp implements TeamLedService {
 			throw new DomainException(TeamLedService.class, "The secret doesn't check.");
 		}
 		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
+	}
+
+	@Override
+	public TeamLed random(Long id, String secret) throws DomainException {
+		Optional<TeamLed> team = teamLedRepository.findById(id);
+		if (team.isPresent()) {
+			if (team.get().getSecret().equals(secret)) {
+				HelperFacade.groupSelector(new TeamDTO().toDTO(team.get()), new EventDTO().toDTO(team.get().getEvent()));
+				return teamLedRepository.findById(id).get();
+			}
+			throw new DomainException(TeamLedService.class, "The secret doesn't check.");
+		}
+		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
+	}
+
+	@Override
+	public List<TeamLed> shuffle(Long idEvent) throws DomainException {
+		List<TeamLed> response = new ArrayList<TeamLed>();
+		for(TeamLed team : teamLedRepository.findByEventId(idEvent)) {
+			response.add(random(team.getId(), team.getSecret()));
+		}
+		return response;
 	}
 
 }

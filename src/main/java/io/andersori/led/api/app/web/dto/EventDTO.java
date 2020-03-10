@@ -50,10 +50,7 @@ public class EventDTO implements DTO<Event, EventDTO> {
 		ownerUsername = entity.getOwner().getUser().getUsername();
 		name = entity.getName();
 		date = entity.getDate();
-		description = entity.getDescription();
-
-		System.out.println(entity.getGroups().size());
-		
+		description = entity.getDescription();		
 		groups = entity.getGroups().stream().map(gp -> {
 			return new GroupDTO().toDTO(gp);
 		}).collect(Collectors.toList());

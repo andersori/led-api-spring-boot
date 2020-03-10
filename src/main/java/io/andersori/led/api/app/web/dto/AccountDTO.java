@@ -51,6 +51,7 @@ public class AccountDTO implements DTO<Account, AccountDTO> {
 	}
 
 	public Account toEntity() {
+		roles.add(RoleLed.DEFAULT);
 		Account entity = new Account();
 		UserLed user = new UserLed();
 		user.setId(id);

@@ -111,7 +111,7 @@ public class AccountServiceImp implements AccountService {
 	@Override
 	public Account register(AccountDTO account) throws DomainException {
 		Optional<UserLed> user = userLedRepository.findByUsername(account.getUsername());
-		if (user.isEmpty()) {
+		if (!user.isPresent()) {
 			try {
 				Account acEntity = account.toEntity();
 				acEntity.getUser().setPassword(passwordEncoder.encode(acEntity.getUser().getPassword()));
