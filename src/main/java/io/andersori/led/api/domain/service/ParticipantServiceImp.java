@@ -1,7 +1,9 @@
 package io.andersori.led.api.domain.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import io.andersori.led.api.app.web.dto.EventDTO;
 import io.andersori.led.api.app.web.dto.ParticipantDTO;
 import io.andersori.led.api.app.web.dto.TeamDTO;
+import io.andersori.led.api.domain.HelperFacade;
 import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.exception.NotFoundException;
@@ -26,7 +29,7 @@ public class ParticipantServiceImp implements ParticipantService {
 
 	@Override
 	public Participant save(ParticipantDTO data) throws DomainException {
-		return repo.save(data.toEntity(teamService.find(data.getIdTeam()), eventService.find(data.getIdEvent())));
+		return repo.save(data.toEntity(null, eventService.find(data.getIdEvent())));
 	}
 
 	@Override
@@ -67,6 +70,36 @@ public class ParticipantServiceImp implements ParticipantService {
 		} else {
 			throw new NotFoundException(EventService.class, "Participant with id " + parti.getId() + " not found.");
 		}
+	}
+
+	@Override
+	public List<Participant> shuffle(Long idEvent) throws DomainException {
+		List<Participant> response = new ArrayList<Participant>();
+		for (Participant team : repo.findByEventId(idEvent).stream().map(p -> {
+			p.setTeam(null);
+			return repo.save(p);
+		}).collect(Collectors.toList())) {
+
+			response.add(random(team.getId(), team.getSecret()));
+		}
+		return response;
+	}
+
+	@Override
+	public Participant random(Long id, String secret) throws DomainException {
+		Optional<Participant> parti = repo.findById(id);
+		if (parti.isPresent()) {
+			if (parti.get().getSecret().equals(secret)) {
+				if(parti.get().getTeam() == null) {
+					HelperFacade.teamSelector(new ParticipantDTO().toDTO(parti.get()),
+							new EventDTO().toDTO(parti.get().getEvent()));
+					return repo.findById(id).get();
+				}
+				throw new DomainException(ParticipantService.class, "You are not allowed to change your team.");	
+			}
+			throw new DomainException(ParticipantService.class, "The secret doesn't check.");
+		}
+		throw new NotFoundException(ParticipantService.class, "Participant with id " + id + " not found.");
 	}
 
 }

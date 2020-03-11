@@ -24,10 +24,9 @@ public class TeamDTO implements DTO<TeamLed, TeamDTO> {
 	@Setter(AccessLevel.PRIVATE)
 	private String secret = HelperFacade.secretGenerator();
 	@Setter(AccessLevel.PRIVATE)
-	private Long groupId;
-	@Setter(AccessLevel.PRIVATE)
 	private List<String> participants;
 
+	private Long groupId;
 	private String name;
 	private Long eventId;
 

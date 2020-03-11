@@ -46,9 +46,9 @@ public abstract class HelperFacade {
 						.collect(Collectors.toList());
 
 				for (TeamDTO t : teams) {
-					if (t.getGroupId() != null) {
+					if (t.getGroupId() == null) {
 						throw new DomainException(HelperFacade.class,
-								"Team" + t.getName() + " is not yet part of a group.");
+								"Team " + t.getName() + " is not yet part of a group.");
 					}
 				}
 

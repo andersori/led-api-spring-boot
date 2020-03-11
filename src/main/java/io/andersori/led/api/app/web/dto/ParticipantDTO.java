@@ -4,14 +4,19 @@ import io.andersori.led.api.domain.HelperFacade;
 import io.andersori.led.api.domain.entity.Event;
 import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.entity.TeamLed;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 @Data
 public class ParticipantDTO implements DTO<Participant, ParticipantDTO> {
 
+	@Setter(AccessLevel.PRIVATE)
 	private Long id;
 	private String name;
+	@Setter(AccessLevel.PRIVATE)
 	private String secret = HelperFacade.secretGenerator();
+	@Setter(AccessLevel.PRIVATE)
 	private Long idTeam;
 	private Long idEvent;
 
@@ -20,7 +25,7 @@ public class ParticipantDTO implements DTO<Participant, ParticipantDTO> {
 		id = entity.getId();
 		name = entity.getName();
 		secret = entity.getSecret();
-		idTeam = entity.getTeam().getId();
+		idTeam = entity.getTeam() != null ? entity.getTeam().getId() : null;
 		idEvent = entity.getEvent().getId();
 		return this;
 	}

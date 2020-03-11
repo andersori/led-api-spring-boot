@@ -1,5 +1,8 @@
 package io.andersori.led.api.app.web.controller;
 
+import static io.andersori.led.api.app.web.controller.util.PathConfig.ADMIN_PATH;
+import static io.andersori.led.api.app.web.controller.util.PathConfig.PROTECTED_PATH;
+import static io.andersori.led.api.app.web.controller.util.PathConfig.PUBLIC_PATH;
 import static io.andersori.led.api.app.web.controller.util.PathConfig.VERSION;
 
 import java.util.List;
@@ -24,9 +27,6 @@ import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.TeamLedService;
 import lombok.extern.slf4j.Slf4j;
 
-import static io.andersori.led.api.app.web.controller.util.PathConfig.ADMIN_PATH;
-import static io.andersori.led.api.app.web.controller.util.PathConfig.PROTECTED_PATH;
-
 @Slf4j
 @RestController
 @RequestMapping(VERSION)
@@ -43,6 +43,7 @@ public class TeamController implements DomainController<TeamDTO> {
 	@Override
 	@PostMapping(PROTECTED_PATH + PATH)
 	public TeamDTO save(@RequestBody TeamDTO data) throws DomainException {
+		data.setGroupId(null);
 		return new TeamDTO().toDTO(teamService.save(data));
 	}
 
@@ -95,14 +96,14 @@ public class TeamController implements DomainController<TeamDTO> {
 		teamService.delete(id);
 	}
 
-	@PostMapping(ADMIN_PATH + PATH + "/{id}/random")
+	@PostMapping(PUBLIC_PATH + PATH + "/{id}/random")
 	public TeamDTO randomGroup(@PathVariable Long id, @RequestParam(required = true) String secret)
 			throws DomainException {
 		return new TeamDTO().toDTO(teamService.random(id, secret));
 	}
 
-	@PostMapping(ADMIN_PATH + PATH + "/{idEvent}/shuffle")
-	public List<TeamDTO> shuffleAll(@PathVariable Long idEvent) throws DomainException {
+	@PostMapping(ADMIN_PATH + PATH + "/shuffle")
+	public List<TeamDTO> shuffleAll(@RequestParam(required = true) Long idEvent) throws DomainException {
 		return teamService.shuffle(idEvent).stream().map(team -> new TeamDTO().toDTO(team))
 				.collect(Collectors.toList());
 	}

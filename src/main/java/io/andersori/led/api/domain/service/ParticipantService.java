@@ -13,4 +13,8 @@ public interface ParticipantService extends Service<Participant, ParticipantDTO>
 	List<Participant> find(EventDTO event);
 	
 	void updateTeam(ParticipantDTO parti, TeamDTO team) throws DomainException;
+	
+	Participant random(Long id, String secret) throws DomainException;
+
+	List<Participant> shuffle(Long idEvent) throws DomainException;
 }

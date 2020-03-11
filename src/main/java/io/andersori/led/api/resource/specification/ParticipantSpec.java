@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import io.andersori.led.api.app.web.dto.ParticipantDTO;
+import io.andersori.led.api.domain.entity.Event_;
 import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.entity.Participant_;
 import io.andersori.led.api.domain.entity.TeamLed_;
@@ -31,6 +32,8 @@ public class ParticipantSpec implements Specification<Participant> {
 		if (filter.getName() != null)
 			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Participant_.name)),
 					"%" + filter.getName().toLowerCase() + "%"));
+		if (filter.getIdEvent() != null)
+			predicates.add(criteriaBuilder.equal(root.join(Participant_.event).get(Event_.id), filter.getIdEvent()));
 
 		return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 	}
