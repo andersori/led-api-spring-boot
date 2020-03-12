@@ -52,6 +52,11 @@ public class TeamController implements DomainController<TeamDTO> {
 	public TeamDTO find(@PathVariable Long id) throws DomainException {
 		return new TeamDTO().toDTO(teamService.find(id));
 	}
+	
+	@GetMapping(PUBLIC_PATH + PATH + "/{id}")
+	public TeamDTO find(@PathVariable Long id, @RequestParam String secret) throws DomainException {
+		return new TeamDTO().toDTO(teamService.findWithSecret(id, secret));
+	}
 
 	@Override
 	@GetMapping(PROTECTED_PATH + PATH)

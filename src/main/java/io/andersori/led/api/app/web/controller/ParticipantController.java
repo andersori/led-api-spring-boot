@@ -45,6 +45,11 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 	public ParticipantDTO find(@PathVariable Long id) throws DomainException {
 		return new ParticipantDTO().toDTO(service.find(id));
 	}
+	
+	@GetMapping(PUBLIC_PATH + PATH + "/{id}")
+	public ParticipantDTO find(@PathVariable Long id, @RequestParam(required = true) String secret) throws DomainException {
+			return new ParticipantDTO().toDTO(service.findWithSecret(id, secret));
+	}
 
 	@Override
 	@GetMapping(PROTECTED_PATH + PATH)
@@ -80,5 +85,5 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 	public List<ParticipantDTO> shuffle(@RequestParam(required = true) Long idEvent) throws DomainException {
 		return service.shuffle(idEvent).stream().map(p -> new ParticipantDTO().toDTO(p)).collect(Collectors.toList());
 	}
-
+	
 }

@@ -1,6 +1,7 @@
 package io.andersori.led.api.app.web.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,9 @@ import io.andersori.led.api.app.web.controller.util.PathConfig;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	@Value("${cors.origin}")
+	private String origin;
+	
 	@Autowired
 	private JWTAuthenticationFilter authenticationFilter;
 	
@@ -79,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://andersori.github.io");
+        config.addAllowedOrigin(origin);
         config.addAllowedHeader("*");
         config.addExposedHeader(HttpHeaders.AUTHORIZATION);
         config.addAllowedMethod("*");

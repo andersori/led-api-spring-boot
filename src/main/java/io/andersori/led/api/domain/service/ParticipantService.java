@@ -17,4 +17,6 @@ public interface ParticipantService extends Service<Participant, ParticipantDTO>
 	Participant random(Long id, String secret) throws DomainException;
 
 	List<Participant> shuffle(Long idEvent) throws DomainException;
+
+	Participant findWithSecret(Long id, String secret) throws DomainException;
 }

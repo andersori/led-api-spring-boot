@@ -21,4 +21,6 @@ public interface TeamLedService extends Service<TeamLed, TeamDTO> {
 	TeamLed random(Long id, String secret) throws DomainException;
 
 	List<TeamLed> shuffle(Long idEvent) throws DomainException;
+
+	TeamLed findWithSecret(Long id, String secret) throws DomainException;
 }

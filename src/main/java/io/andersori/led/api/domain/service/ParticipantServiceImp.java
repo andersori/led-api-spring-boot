@@ -90,16 +90,29 @@ public class ParticipantServiceImp implements ParticipantService {
 		Optional<Participant> parti = repo.findById(id);
 		if (parti.isPresent()) {
 			if (parti.get().getSecret().equals(secret)) {
-				if(parti.get().getTeam() == null) {
+				if (parti.get().getTeam() == null) {
 					HelperFacade.teamSelector(new ParticipantDTO().toDTO(parti.get()),
 							new EventDTO().toDTO(parti.get().getEvent()));
 					return repo.findById(id).get();
 				}
-				throw new DomainException(ParticipantService.class, "You are not allowed to change your team.");	
+				throw new DomainException(ParticipantService.class, "You are not allowed to change your team.");
 			}
 			throw new DomainException(ParticipantService.class, "The secret doesn't check.");
 		}
 		throw new NotFoundException(ParticipantService.class, "Participant with id " + id + " not found.");
+	}
+
+	@Override
+	public Participant findWithSecret(Long id, String secret) throws DomainException {
+		Optional<Participant> participant = repo.findById(id);
+		if (participant.isPresent()) {
+			if (participant.get().getSecret().equals(secret)) {
+				return participant.get();
+			}
+			throw new DomainException(EventService.class, "The secret doesn't check.");
+		} else {
+			throw new NotFoundException(EventService.class, "Participant with id " + id + " not found.");
+		}
 	}
 
 }
