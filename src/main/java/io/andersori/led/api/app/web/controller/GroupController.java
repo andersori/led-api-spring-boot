@@ -1,6 +1,7 @@
 package io.andersori.led.api.app.web.controller;
 
 import static io.andersori.led.api.app.web.controller.util.PathConfig.PROTECTED_PATH;
+import static io.andersori.led.api.app.web.controller.util.PathConfig.PUBLIC_PATH;
 import static io.andersori.led.api.app.web.controller.util.PathConfig.VERSION;
 
 import java.util.List;
@@ -42,6 +43,11 @@ public class GroupController implements DomainController<GroupDTO> {
 	@Override
 	@GetMapping(PROTECTED_PATH + PATH + "/{id}")
 	public GroupDTO find(@PathVariable Long id) throws DomainException {
+		return new GroupDTO().toDTO(groupService.find(id));
+	}
+	
+	@GetMapping(PUBLIC_PATH + PATH + "/{id}")
+	public GroupDTO findPublic(@PathVariable Long id) throws DomainException {
 		return new GroupDTO().toDTO(groupService.find(id));
 	}
 

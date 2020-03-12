@@ -161,10 +161,16 @@ public class TeamLedServiceImp implements TeamLedService {
 	public TeamLed findWithSecret(Long id, String secret) throws DomainException {
 		Optional<TeamLed> team = teamLedRepository.findById(id);
 		if (team.isPresent()) {
-			if (team.get().getSecret().equals(secret)) {
-				return team.get();
+			if (secret != null) {
+				if (team.get().getSecret().equals(secret)) {
+					return team.get();
+				}
+				throw new DomainException(TeamLedService.class, "The secret doesn't check.");
+			} else {
+				TeamLed teamEntity = team.get();
+				teamEntity.setSecret(null);
+				return teamEntity;
 			}
-			throw new DomainException(TeamLedService.class, "The secret doesn't check.");
 		}
 		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
 	}
