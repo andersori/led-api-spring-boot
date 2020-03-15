@@ -35,7 +35,7 @@ public class GroupLed {
 	@Column(name = "name", length = 100, nullable = false)
 	private String name;
 
-	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
 	private Set<TeamLed> teams;
 
 }
