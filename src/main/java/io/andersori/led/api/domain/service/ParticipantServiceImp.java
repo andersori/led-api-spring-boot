@@ -29,7 +29,7 @@ public class ParticipantServiceImp implements ParticipantService {
 
 	@Override
 	public Participant save(ParticipantDTO data) throws DomainException {
-		return repo.save(data.toEntity(null, eventService.find(data.getIdEvent())));
+		return repo.saveAndFlush(data.toEntity(null, eventService.find(data.getIdEvent())));
 	}
 
 	@Override
