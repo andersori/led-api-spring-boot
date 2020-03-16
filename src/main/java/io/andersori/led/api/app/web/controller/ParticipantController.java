@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.andersori.led.api.app.web.dto.ParticipantDTO;
+import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.ParticipantService;
 import lombok.AllArgsConstructor;
@@ -45,10 +46,11 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 	public ParticipantDTO find(@PathVariable Long id) throws DomainException {
 		return new ParticipantDTO().toDTO(service.find(id));
 	}
-	
+
 	@GetMapping(PUBLIC_PATH + PATH + "/{id}")
-	public ParticipantDTO find(@PathVariable Long id, @RequestParam(required = true) String secret) throws DomainException {
-			return new ParticipantDTO().toDTO(service.findWithSecret(id, secret));
+	public ParticipantDTO find(@PathVariable Long id, @RequestParam(required = true) String secret)
+			throws DomainException {
+		return new ParticipantDTO().toDTO(service.findWithSecret(id, secret));
 	}
 
 	@Override
@@ -69,6 +71,13 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 		return new ParticipantDTO().toDTO(service.save(participant));
 	}
 
+	@PutMapping(ADMIN_PATH + PATH + "/{id}/team/null")
+	public ParticipantDTO updateAdmin(@PathVariable Long id) throws DomainException {
+		Participant participant = service.find(id);
+		participant.setTeam(null);
+		return new ParticipantDTO().toDTO(service.save(new ParticipantDTO().toDTO(participant)));
+	}
+
 	@Override
 	@DeleteMapping(ADMIN_PATH + PATH + "/{id}")
 	public void delete(@PathVariable Long id) throws DomainException {
@@ -77,7 +86,7 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 
 	@PostMapping(PUBLIC_PATH + PATH + "/{id}/random")
 	public ParticipantDTO random(@PathVariable Long id, @RequestParam(required = true) String secret)
-			throws DomainException {		
+			throws DomainException {
 		return new ParticipantDTO().toDTO(service.random(id, secret));
 	}
 
@@ -85,5 +94,5 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 	public List<ParticipantDTO> shuffle(@RequestParam(required = true) Long idEvent) throws DomainException {
 		return service.shuffle(idEvent).stream().map(p -> new ParticipantDTO().toDTO(p)).collect(Collectors.toList());
 	}
-	
+
 }
