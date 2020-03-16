@@ -29,7 +29,7 @@ public class ParticipantServiceImp implements ParticipantService {
 
 	@Override
 	public Participant save(ParticipantDTO data) throws DomainException {
-		return repo.saveAndFlush(data.toEntity(null, eventService.find(data.getIdEvent())));
+		return repo.save(data.toEntity(null, eventService.find(data.getIdEvent())));
 	}
 
 	@Override
@@ -113,6 +113,18 @@ public class ParticipantServiceImp implements ParticipantService {
 		} else {
 			throw new NotFoundException(EventService.class, "Participant with id " + id + " not found.");
 		}
+	}
+
+	@Override
+	public Participant setTeamNull(Long id) throws DomainException {
+		Optional<Participant> participant = repo.findById(id);
+		if (participant.isPresent()) {
+			Participant p = participant.get();
+			p.setTeam(null);
+			repo.save(p);
+			return p;
+		}
+		throw new NotFoundException(GroupLedService.class, "Participant with id " + id + " not found.");
 	}
 
 }

@@ -8,15 +8,17 @@ import io.andersori.led.api.app.web.dto.TeamDTO;
 import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.exception.DomainException;
 
-public interface ParticipantService extends Service<Participant, ParticipantDTO>{
-	
+public interface ParticipantService extends Service<Participant, ParticipantDTO> {
+
 	List<Participant> find(EventDTO event);
-	
+
 	void updateTeam(ParticipantDTO parti, TeamDTO team) throws DomainException;
-	
+
 	Participant random(Long id, String secret) throws DomainException;
 
 	List<Participant> shuffle(Long idEvent) throws DomainException;
 
 	Participant findWithSecret(Long id, String secret) throws DomainException;
+
+	Participant setTeamNull(Long id) throws DomainException;
 }

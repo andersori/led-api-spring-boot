@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.andersori.led.api.app.web.dto.ParticipantDTO;
-import io.andersori.led.api.domain.entity.Participant;
 import io.andersori.led.api.domain.exception.DomainException;
 import io.andersori.led.api.domain.service.ParticipantService;
 import lombok.AllArgsConstructor;
@@ -73,9 +72,7 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 
 	@PutMapping(ADMIN_PATH + PATH + "/{id}/team/null")
 	public ParticipantDTO updateAdmin(@PathVariable Long id) throws DomainException {
-		Participant participant = service.find(id);
-		participant.setTeam(null);
-		return new ParticipantDTO().toDTO(service.save(new ParticipantDTO().toDTO(participant)));
+		return new ParticipantDTO().toDTO(service.setTeamNull(id));
 	}
 
 	@Override
