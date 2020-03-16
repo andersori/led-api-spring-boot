@@ -127,4 +127,17 @@ public class ParticipantServiceImp implements ParticipantService {
 		throw new NotFoundException(GroupLedService.class, "Participant with id " + id + " not found.");
 	}
 
+	@Override
+	public Participant updateName(Long id, ParticipantDTO parti) throws DomainException {
+		Optional<Participant> participant = repo.findById(id);
+		if (participant.isPresent()) {
+			if (parti.getName() != null) {
+				participant.get().setName(parti.getName());
+				return repo.save(participant.get());
+			}
+			return participant.get();
+		}
+		throw new NotFoundException(GroupLedService.class, "Participant with id " + id + " not found.");
+	}
+
 }

@@ -62,12 +62,7 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 	@Override
 	@PutMapping(PROTECTED_PATH + PATH + "/{id}")
 	public ParticipantDTO update(@PathVariable Long id, @RequestBody ParticipantDTO data) throws DomainException {
-		ParticipantDTO participant = new ParticipantDTO().toDTO(service.find(id));
-
-		if (participant.getName() != data.getName())
-			participant.setName(data.getName());
-
-		return new ParticipantDTO().toDTO(service.save(participant));
+		return new ParticipantDTO().toDTO(service.updateName(id, data));
 	}
 
 	@PutMapping(ADMIN_PATH + PATH + "/{id}/team/null")
