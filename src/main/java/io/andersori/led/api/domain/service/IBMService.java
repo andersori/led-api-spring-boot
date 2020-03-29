@@ -7,6 +7,7 @@ import com.ibm.cloud.sdk.core.service.exception.NotFoundException;
 import com.ibm.watson.assistant.v2.Assistant;
 import com.ibm.watson.assistant.v2.model.CreateSessionOptions;
 import com.ibm.watson.assistant.v2.model.MessageInput;
+import com.ibm.watson.assistant.v2.model.MessageInputOptions;
 import com.ibm.watson.assistant.v2.model.MessageOptions;
 import com.ibm.watson.assistant.v2.model.MessageResponse;
 
@@ -37,9 +38,11 @@ public class IBMService {
 
 			messageService.save(new UserMessageDTO(messageInput, appUuid));
 
+			MessageInputOptions inputOptions = new MessageInputOptions.Builder().returnContext(true).build();
+			
 			return assistant
 					.message(new MessageOptions.Builder(assistantId, getSessionId(appUuid))
-							.input(new MessageInput.Builder().messageType("text").text(messageInput).build()).build())
+							.input(new MessageInput.Builder().messageType("text").options(inputOptions).text(messageInput).build()).build())
 					.execute().getResult();
 		} catch (NotFoundException e) {
 			redis.del(appUuid);
