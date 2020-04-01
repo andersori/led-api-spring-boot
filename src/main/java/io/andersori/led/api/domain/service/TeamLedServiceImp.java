@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
@@ -131,7 +132,7 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public TeamLed random(Long id, String secret) throws DomainException {
 		Optional<TeamLed> team = teamLedRepository.findById(id);
 		if (team.isPresent()) {
@@ -158,7 +159,7 @@ public class TeamLedServiceImp implements TeamLedService {
 		return res;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private List<TeamLed> setNull(Long idEvent) {
 		List<TeamLed> response = new ArrayList<TeamLed>();
 		for (TeamLed team : teamLedRepository.findByEventId(idEvent).stream().map(t -> {

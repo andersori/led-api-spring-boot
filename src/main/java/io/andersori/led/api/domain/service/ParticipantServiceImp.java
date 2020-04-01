@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
@@ -83,7 +84,7 @@ public class ParticipantServiceImp implements ParticipantService {
 		return res;
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private List<Participant> setNull(Long idEvent){
 		List<Participant> response = new ArrayList<Participant>();
 		for (Participant team : repo.findByEventId(idEvent).stream().map(p -> {
@@ -96,7 +97,7 @@ public class ParticipantServiceImp implements ParticipantService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Participant random(Long id, String secret) throws DomainException {
 		Optional<Participant> parti = repo.findById(id);
 		if (parti.isPresent()) {
