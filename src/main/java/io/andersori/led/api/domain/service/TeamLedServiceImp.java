@@ -107,6 +107,7 @@ public class TeamLedServiceImp implements TeamLedService {
 		if (team.isPresent()) {
 			if (team.get().getSecret().equals(secret)) {
 				teamLedRepository.changeGroup(id, idGroup);
+				teamLedRepository.flush();
 				return teamLedRepository.findById(id).get();
 			}
 			throw new DomainException(TeamLedService.class, "The secret doesn't check.");
@@ -149,7 +150,7 @@ public class TeamLedServiceImp implements TeamLedService {
 		List<TeamLed> response = new ArrayList<TeamLed>();
 		for (TeamLed team : teamLedRepository.findByEventId(idEvent).stream().map(t -> {
 			t.setGroup(null);
-			return teamLedRepository.save(t);
+			return teamLedRepository.saveAndFlush(t);
 		}).collect(Collectors.toList())) {
 
 			response.add(random(team.getId(), team.getSecret()));
@@ -173,6 +174,19 @@ public class TeamLedServiceImp implements TeamLedService {
 			}
 		}
 		throw new NotFoundException(TeamLedService.class, "Team with id " + id + " not found.");
+	}
+
+	@Override
+	public List<TeamLed> reverseShuffle(Long idEvent) throws DomainException {
+		List<TeamLed> response = new ArrayList<TeamLed>();
+		for (TeamLed team : teamLedRepository.findByEventId(idEvent).stream().map(t -> {
+			t.setGroup(null);
+			return teamLedRepository.saveAndFlush(t);
+		}).collect(Collectors.toList())) {
+
+			response.add(team);
+		}
+		return response;
 	}
 
 }

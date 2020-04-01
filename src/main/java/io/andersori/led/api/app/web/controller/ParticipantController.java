@@ -86,5 +86,10 @@ public class ParticipantController implements DomainController<ParticipantDTO> {
 	public List<ParticipantDTO> shuffle(@RequestParam(required = true) Long idEvent) throws DomainException {
 		return service.shuffle(idEvent).stream().map(p -> new ParticipantDTO().toDTO(p)).collect(Collectors.toList());
 	}
+	
+	@PostMapping(ADMIN_PATH + PATH + "/reverse-shuffle")
+	public List<ParticipantDTO> reverseShuffle(@RequestParam(required = true) Long idEvent) throws DomainException {
+		return service.reverseShuffle(idEvent).stream().map(p -> new ParticipantDTO().toDTO(p)).collect(Collectors.toList());
+	}
 
 }

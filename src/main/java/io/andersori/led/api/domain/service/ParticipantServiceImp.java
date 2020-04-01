@@ -66,7 +66,7 @@ public class ParticipantServiceImp implements ParticipantService {
 		Optional<Participant> participant = repo.findById(parti.getId());
 		if (participant.isPresent()) {
 			participant.get().setTeam(teamService.find(team.getId()));
-			repo.save(participant.get());
+			repo.saveAndFlush(participant.get());
 		} else {
 			throw new NotFoundException(EventService.class, "Participant with id " + parti.getId() + " not found.");
 		}
@@ -77,7 +77,7 @@ public class ParticipantServiceImp implements ParticipantService {
 		List<Participant> response = new ArrayList<Participant>();
 		for (Participant team : repo.findByEventId(idEvent).stream().map(p -> {
 			p.setTeam(null);
-			return repo.save(p);
+			return repo.saveAndFlush(p);
 		}).collect(Collectors.toList())) {
 
 			response.add(random(team.getId(), team.getSecret()));
@@ -138,6 +138,19 @@ public class ParticipantServiceImp implements ParticipantService {
 			return participant.get();
 		}
 		throw new NotFoundException(GroupLedService.class, "Participant with id " + id + " not found.");
+	}
+
+	@Override
+	public List<Participant> reverseShuffle(Long idEvent) throws DomainException {
+		List<Participant> response = new ArrayList<Participant>();
+		for (Participant team : repo.findByEventId(idEvent).stream().map(p -> {
+			p.setTeam(null);
+			return repo.saveAndFlush(p);
+		}).collect(Collectors.toList())) {
+
+			response.add(team);
+		}
+		return response;
 	}
 
 }

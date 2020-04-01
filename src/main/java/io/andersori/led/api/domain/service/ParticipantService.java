@@ -11,7 +11,7 @@ import io.andersori.led.api.domain.exception.DomainException;
 public interface ParticipantService extends Service<Participant, ParticipantDTO> {
 
 	List<Participant> find(EventDTO event);
-	
+
 	Participant updateName(Long id, ParticipantDTO parti) throws DomainException;
 
 	void updateTeam(ParticipantDTO parti, TeamDTO team) throws DomainException;
@@ -23,4 +23,6 @@ public interface ParticipantService extends Service<Participant, ParticipantDTO>
 	Participant findWithSecret(Long id, String secret) throws DomainException;
 
 	Participant setTeamNull(Long id) throws DomainException;
+
+	List<Participant> reverseShuffle(Long idEvent) throws DomainException;
 }

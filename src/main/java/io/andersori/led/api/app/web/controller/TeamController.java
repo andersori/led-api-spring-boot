@@ -108,8 +108,14 @@ public class TeamController implements DomainController<TeamDTO> {
 	}
 
 	@PostMapping(ADMIN_PATH + PATH + "/shuffle")
-	public List<TeamDTO> shuffleAll(@RequestParam(required = true) Long idEvent) throws DomainException {
+	public List<TeamDTO> shuffle(@RequestParam(required = true) Long idEvent) throws DomainException {
 		return teamService.shuffle(idEvent).stream().map(team -> new TeamDTO().toDTO(team))
+				.collect(Collectors.toList());
+	}
+	
+	@PostMapping(ADMIN_PATH + PATH + "/reverse-shuffle")
+	public List<TeamDTO> reverseShuffle(@RequestParam(required = true) Long idEvent) throws DomainException {
+		return teamService.reverseShuffle(idEvent).stream().map(team -> new TeamDTO().toDTO(team))
 				.collect(Collectors.toList());
 	}
 
