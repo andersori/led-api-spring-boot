@@ -14,7 +14,7 @@ public class LedApiApplication {
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			contex.getBean(Jedis.class).disconnect();
-		}));		
+		}));	
 	}
 
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
 
@@ -102,6 +103,7 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
+	@Transactional
 	public TeamLed updateGroup(Long id, Long idGroup, String secret) throws DomainException {
 		Optional<TeamLed> team = teamLedRepository.findById(id);
 		if (team.isPresent()) {
@@ -129,6 +131,7 @@ public class TeamLedServiceImp implements TeamLedService {
 	}
 
 	@Override
+	@Transactional
 	public TeamLed random(Long id, String secret) throws DomainException {
 		Optional<TeamLed> team = teamLedRepository.findById(id);
 		if (team.isPresent()) {
@@ -147,13 +150,22 @@ public class TeamLedServiceImp implements TeamLedService {
 
 	@Override
 	public List<TeamLed> shuffle(Long idEvent) throws DomainException {
+		List<TeamLed> response = setNull(idEvent);
+		List<TeamLed> res = new ArrayList<TeamLed>();
+		for (TeamLed team : response) {
+			res.add(random(team.getId(), team.getSecret()));
+		}
+		return res;
+	}
+
+	@Transactional
+	private List<TeamLed> setNull(Long idEvent) {
 		List<TeamLed> response = new ArrayList<TeamLed>();
 		for (TeamLed team : teamLedRepository.findByEventId(idEvent).stream().map(t -> {
 			t.setGroup(null);
 			return teamLedRepository.saveAndFlush(t);
 		}).collect(Collectors.toList())) {
-
-			response.add(random(team.getId(), team.getSecret()));
+			response.add(team);
 		}
 		return response;
 	}

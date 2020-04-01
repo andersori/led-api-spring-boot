@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.andersori.led.api.app.web.dto.EventDTO;
 import io.andersori.led.api.app.web.dto.ParticipantDTO;
@@ -74,18 +75,28 @@ public class ParticipantServiceImp implements ParticipantService {
 
 	@Override
 	public List<Participant> shuffle(Long idEvent) throws DomainException {
+		List<Participant> response = setNull(idEvent);
+		List<Participant> res = new ArrayList<Participant>();
+		for (Participant team : response) {
+			res.add(random(team.getId(), team.getSecret()));
+		}
+		return res;
+	}
+	
+	@Transactional
+	private List<Participant> setNull(Long idEvent){
 		List<Participant> response = new ArrayList<Participant>();
 		for (Participant team : repo.findByEventId(idEvent).stream().map(p -> {
 			p.setTeam(null);
 			return repo.saveAndFlush(p);
 		}).collect(Collectors.toList())) {
-
-			response.add(random(team.getId(), team.getSecret()));
+			response.add(team);
 		}
 		return response;
 	}
 
 	@Override
+	@Transactional
 	public Participant random(Long id, String secret) throws DomainException {
 		Optional<Participant> parti = repo.findById(id);
 		if (parti.isPresent()) {
