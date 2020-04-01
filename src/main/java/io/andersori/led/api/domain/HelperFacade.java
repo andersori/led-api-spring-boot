@@ -54,12 +54,13 @@ public abstract class HelperFacade {
 
 				List<ParticipantDTO> participants = PARTICIPANT_SERVICE.find(event).stream()
 						.map(parti -> new ParticipantDTO().toDTO(parti)).collect(Collectors.toList());
-				
+
 				int maxPerTeam = (int) Math.floor(participants.size() / teams.size());
-				
+
 				maxPerTeam = maxPerTeam == 0 ? maxPerTeam + 1 : maxPerTeam;
-				
+
 				List<TeamDTO> allowedTeams = new ArrayList<TeamDTO>();
+				List<TeamDTO> allowedTeamsPlus = new ArrayList<TeamDTO>();
 				for (TeamDTO t : teams) {
 					List<ParticipantDTO> partis = participants.stream()
 							.filter(p -> p.getIdTeam() != null && p.getIdTeam() == t.getId())
@@ -67,6 +68,8 @@ public abstract class HelperFacade {
 
 					if (partis.size() < maxPerTeam) {
 						allowedTeams.add(t);
+					} else if (partis.size() == maxPerTeam) {
+						allowedTeamsPlus.add(t);
 					}
 
 				}
@@ -75,7 +78,7 @@ public abstract class HelperFacade {
 				if (allowedTeams.size() > 0) {
 					team = allowedTeams.get(RAND.nextInt(allowedTeams.size()));
 				} else {
-					team = teams.get(RAND.nextInt(teams.size()));
+					team = allowedTeamsPlus.get(RAND.nextInt(allowedTeamsPlus.size()));
 				}
 				PARTICIPANT_SERVICE.updateTeam(participant, team);
 			} else {
@@ -103,6 +106,7 @@ public abstract class HelperFacade {
 				maxPerGroup = maxPerGroup == 0 ? maxPerGroup + 1 : maxPerGroup;
 
 				List<GroupDTO> allowedGroups = new ArrayList<GroupDTO>();
+				List<GroupDTO> allowedGroupsPlus = new ArrayList<GroupDTO>();
 				for (GroupDTO g : groups) {
 					List<TeamDTO> participatingTeams = teams.stream()
 							.filter(t -> t.getGroupId() != null && t.getGroupId() == g.getId())
@@ -110,6 +114,8 @@ public abstract class HelperFacade {
 
 					if (participatingTeams.size() < maxPerGroup) {
 						allowedGroups.add(g);
+					} else if (participatingTeams.size() == maxPerGroup) {
+						allowedGroupsPlus.add(g);
 					}
 
 				}
@@ -118,7 +124,7 @@ public abstract class HelperFacade {
 				if (allowedGroups.size() > 0) {
 					group = allowedGroups.get(RAND.nextInt(allowedGroups.size()));
 				} else {
-					group = groups.get(RAND.nextInt(groups.size()));
+					group = allowedGroupsPlus.get(RAND.nextInt(allowedGroupsPlus.size()));
 				}
 				TEAM_SERVICE.updateGroup(team.getId(), group.getId(), team.getSecret());
 			} else {
